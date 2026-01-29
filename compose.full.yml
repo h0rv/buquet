@@ -1,0 +1,73 @@
+# Full stack - LocalStack + oq services (for CI/demos)
+#
+# Usage:
+#   docker compose -f compose.full.yml up -d
+#   open http://localhost:8080  # Dashboard
+#
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - ./scripts/init-localstack.sh:/etc/localstack/init/ready.d/init.sh:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 10s
+
+  worker:
+    build: .
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      - S3_ENDPOINT=http://localstack:4566
+      - S3_BUCKET=oq-dev
+      - S3_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - RUST_LOG=info
+    command: ["worker", "--no-monitor"]
+    restart: unless-stopped
+
+  monitor:
+    build: .
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      - S3_ENDPOINT=http://localstack:4566
+      - S3_BUCKET=oq-dev
+      - S3_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - RUST_LOG=info
+    command: ["monitor"]
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    depends_on:
+      localstack:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - S3_ENDPOINT=http://localstack:4566
+      - S3_BUCKET=oq-dev
+      - S3_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - RUST_LOG=info
+    command: ["serve", "--port", "8080"]
+    restart: unless-stopped
+
+volumes:
+  localstack_data:

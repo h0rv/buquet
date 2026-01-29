@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "crates/oq",
+    "crates/oq-workflows",
+]
+
+default-members = [
+    "crates/oq",
+]
+
+resolver = "2"

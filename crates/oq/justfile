@@ -1,0 +1,89 @@
+# oq crate commands
+
+export UV_CACHE_DIR := justfile_directory() / ".uv-cache"
+
+# Default: show available commands
+default:
+    @just --list
+
+# ============================================================================
+# Combined commands
+# ============================================================================
+
+fmt: fmt-rs fmt-py
+lint: lint-rs lint-py
+check: check-rs check-py
+test: test-rs test-py
+all: fmt lint check test
+
+# ============================================================================
+# Rust
+# ============================================================================
+
+fmt-rs:
+    cargo fmt -p oq
+
+lint-rs:
+    uv run --project {{justfile_directory()}} cargo clippy -p oq --all-features --all-targets
+
+check-rs:
+    uv run --project {{justfile_directory()}} cargo check -p oq --all-features
+
+test-rs:
+    cargo test -p oq
+
+build:
+    cargo build -p oq
+
+release:
+    cargo build -p oq --release
+
+test-integration:
+    cargo test -p oq --test integration -- --ignored
+
+load-test:
+    cargo test -p oq --test load --release --features load-tests -- --nocapture
+
+chaos-test:
+    cargo test -p oq --test chaos --release --features chaos-tests -- --nocapture
+
+clean:
+    cargo clean
+
+run *ARGS:
+    cargo run -p oq -- {{ARGS}}
+
+dev *ARGS:
+    @export $(grep -v '^#' {{justfile_directory()}}/examples/.env.example | xargs) && cargo run -p oq -- {{ARGS}}
+
+serve PORT="8080":
+    @export $(grep -v '^#' {{justfile_directory()}}/examples/.env.example | xargs) && cargo run -p oq -- serve --port {{PORT}}
+
+# ============================================================================
+# Python
+# ============================================================================
+
+py-setup:
+    uv sync --project {{justfile_directory()}} --group dev
+
+py-dev: py-setup
+    uv run --project {{justfile_directory()}} maturin develop
+
+py-build: py-setup
+    uv run --project {{justfile_directory()}} maturin build --release
+
+fmt-py:
+    uv run --project {{justfile_directory()}} ruff format python/ examples/
+    uv run --project {{justfile_directory()}} ruff check --fix --select I python/ examples/
+
+lint-py:
+    uv run --project {{justfile_directory()}} ruff check python/ examples/
+
+check-py: py-setup
+    uv run --project {{justfile_directory()}} pyright python/
+
+test-py: py-setup py-dev
+    uv run --project {{justfile_directory()}} pytest
+
+py-verify:
+    uv run --project {{justfile_directory()}} python -c "from oq import connect, Queue, Task, TaskStatus, Worker; print('All imports OK')"

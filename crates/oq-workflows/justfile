@@ -1,0 +1,54 @@
+# oq-workflows crate commands
+
+export UV_CACHE_DIR := justfile_directory() / ".uv-cache"
+
+# Default: show available commands
+default:
+    @just --list
+
+fmt: fmt-rs
+lint: lint-rs
+check: check-rs
+test: test-rs test-py
+
+# ============================================================================
+# Rust
+# ============================================================================
+
+fmt-rs:
+    cargo fmt -p oq-workflows
+
+lint-rs:
+    uv run --project {{justfile_directory()}} cargo clippy -p oq-workflows --all-features --all-targets
+
+check-rs:
+    uv run --project {{justfile_directory()}} cargo check -p oq-workflows --all-features
+
+test-rs:
+    cargo test -p oq-workflows
+
+# ============================================================================
+# Python
+# ============================================================================
+
+# Build oq first, then setup oq-workflows (shared uv workspace)
+py-setup:
+    uv sync --project {{justfile_directory()}} --group dev
+    just -f {{justfile_directory()}}/../oq/justfile py-dev
+
+# Build native module for development
+py-dev: py-setup
+    uv run --project {{justfile_directory()}} maturin develop
+
+test-py: py-dev
+    uv run --project {{justfile_directory()}} pytest tests/ -v
+
+test-py-unit: py-dev
+    uv run --project {{justfile_directory()}} pytest tests/test_types.py tests/test_dag.py -v
+
+# Type checking with pyright
+pyright:
+    uv run --project {{justfile_directory()}} pyright python/
+
+# Full type check (alias)
+typecheck: pyright

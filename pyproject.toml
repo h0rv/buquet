@@ -1,0 +1,22 @@
+[project]
+name = "oq-workspace"
+version = "0.1.0"
+description = "oq workspace"
+requires-python = ">=3.11,<3.14"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "maturin>=1.8,<2.0",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist>=3.5",
+    "ruff>=0.9",
+    "pyright>=1.1",
+]
+
+[tool.uv.workspace]
+members = ["crates/oq", "crates/oq-workflows"]
+
+[tool.uv.sources]
+oq = { workspace = true }
