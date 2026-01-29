@@ -11,7 +11,10 @@ use serde_json::json;
 use std::time::{Duration, Instant};
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_operations_under_simulated_latency() {
     let queue = test_queue().await;
     let task_type = unique_task_type();
@@ -73,7 +76,10 @@ async fn test_operations_under_simulated_latency() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_concurrent_operations_under_load() {
     let queue = test_queue().await;
     let task_type = unique_task_type();
@@ -203,7 +209,10 @@ async fn test_concurrent_operations_under_load() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_task_with_long_timeout_completes_normally() {
     let queue = test_queue().await;
     let task_type = unique_task_type();
@@ -257,7 +266,10 @@ async fn test_task_with_long_timeout_completes_normally() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_rapid_submit_claim_complete_cycle() {
     let queue = test_queue().await;
     let task_type = unique_task_type();

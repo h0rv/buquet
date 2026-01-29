@@ -565,7 +565,7 @@ async fn test_scheduler_tick_updates_last_task_id() {
     }
     assert!(schedule_visible, "Schedule should be visible in list");
 
-    let mut run = None;
+    let mut last_run = None;
     for _ in 0..10 {
         let now = queue
             .now()
@@ -582,29 +582,22 @@ async fn test_scheduler_tick_updates_last_task_id() {
         if !relevant_errors.is_empty() {
             panic!("Scheduler tick reported errors: {:?}", relevant_errors);
         }
-        if let Some(found) = report
-            .runs
-            .iter()
-            .find(|candidate| candidate.schedule_id == schedule_id)
-        {
-            run = Some(found.clone());
+        if let Ok(Some(found)) = manager.get_last_run(&schedule_id).await {
+            last_run = Some(found);
             break;
         }
         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
     }
 
-    let run = run.expect("Expected a scheduler run for the created schedule");
+    let (last_run, _) = last_run.expect("Expected last_run to be recorded");
 
-    let (last_run, _) = manager
-        .get_last_run(&schedule_id)
+    let (task, _) = queue
+        .get(last_run.last_task_id)
         .await
-        .expect("Failed to fetch last run")
-        .expect("Last run should exist");
-
-    assert_eq!(
-        last_run.last_task_id, run.task_id,
-        "last_task_id should match the scheduler run task_id"
-    );
+        .expect("Failed to fetch last_run task")
+        .expect("Task from last_run should exist");
+    assert_eq!(task.task_type, task_type);
+    assert_eq!(task.input, schedule.input);
 
     manager
         .delete(&schedule_id)

@@ -187,7 +187,10 @@ async fn run_load_test(config: LoadTestConfig) -> LoadMetrics {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "load-tests"), ignore = "requires load-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "load-tests"),
+    ignore = "requires load-tests feature (S3)"
+)]
 async fn test_basic_load() {
     let config = LoadTestConfig {
         num_producers: 2,
@@ -223,7 +226,10 @@ async fn test_basic_load() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "load-tests"), ignore = "requires load-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "load-tests"),
+    ignore = "requires load-tests feature (S3)"
+)]
 async fn test_high_contention() {
     // Many workers competing for few tasks
     let config = LoadTestConfig {
@@ -262,7 +268,10 @@ async fn test_high_contention() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "load-tests"), ignore = "requires load-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "load-tests"),
+    ignore = "requires load-tests feature (S3)"
+)]
 async fn test_high_throughput() {
     // Many producers, many workers, many tasks
     let config = LoadTestConfig {

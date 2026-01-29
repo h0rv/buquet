@@ -11,7 +11,10 @@ use serde_json::json;
 use std::time::Duration;
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_worker_crash_recovery() {
     let queue = test_queue().await;
     let task_type = unique_task_type();
@@ -101,7 +104,10 @@ async fn test_worker_crash_recovery() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_repeated_crashes_exhaust_retries() {
     let queue = test_queue().await;
     let task_type = unique_task_type();
@@ -221,7 +227,10 @@ async fn test_repeated_crashes_exhaust_retries() {
 }
 
 #[tokio::test]
-#[cfg_attr(not(feature = "chaos-tests"), ignore = "requires chaos-tests feature (S3)")]
+#[cfg_attr(
+    not(feature = "chaos-tests"),
+    ignore = "requires chaos-tests feature (S3)"
+)]
 async fn test_crash_with_concurrent_monitor() {
     let queue = test_queue().await;
     let task_type = unique_task_type();

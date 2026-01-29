@@ -652,7 +652,7 @@ async fn test_list_handles_expired_tasks() {
         ..Default::default()
     };
 
-    let _valid_task = queue
+    let valid_task = queue
         .submit(&task_type, json!({"test": "valid"}), valid_options)
         .await
         .expect("Failed to submit valid task");
@@ -660,7 +660,8 @@ async fn test_list_handles_expired_tasks() {
     // List tasks - implementation may or may not filter expired
     // This test verifies the behavior is consistent
     // Use the shard from one of the submitted tasks
-    let listed = queue.list("0", None, 100).await.expect("List failed");
+    let shard = valid_task.shard.clone();
+    let listed = queue.list(&shard, None, 100).await.expect("List failed");
 
     // At minimum, the list should work without error
     assert!(!listed.is_empty(), "Should list at least one task");

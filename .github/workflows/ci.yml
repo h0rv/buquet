@@ -14,67 +14,79 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: astral-sh/setup-uv@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check --all-features
+      - run: just check
 
   test:
     name: Test
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: astral-sh/setup-uv@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test --lib --all-features
+      - run: just test
 
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: astral-sh/setup-uv@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
       - uses: Swatinem/rust-cache@v2
-      - run: cargo clippy --all-features --all-targets
+      - run: just lint
 
   fmt:
     name: Format
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: astral-sh/setup-uv@v3
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
-      - run: cargo fmt --all -- --check
+      - run: just fmt
 
   pyright-oq:
     name: Pyright (oq)
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
       - uses: astral-sh/setup-uv@v3
-      - run: uv sync --project crates/oq --group dev --no-install-project
-        env:
-          UV_PYTHON: "3.11"
-      - run: uv run --project crates/oq pyright python/
-        env:
-          UV_PYTHON: "3.11"
+      - run: just oq-typecheck
 
   pyright-workflows:
     name: Pyright (oq-workflows)
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
     steps:
       - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
       - uses: astral-sh/setup-uv@v3
-      - run: uv sync --project crates/oq-workflows --group dev --no-install-project
-        env:
-          UV_PYTHON: "3.11"
-      - run: PYTHONPATH=../oq/python uv run --project crates/oq-workflows pyright python/
-        env:
-          UV_PYTHON: "3.11"
+      - run: just workflows-typecheck
 
   integration:
     name: Integration Tests
