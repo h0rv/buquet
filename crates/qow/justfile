@@ -1,0 +1,54 @@
+# qow crate commands
+
+export UV_CACHE_DIR := justfile_directory() / ".uv-cache"
+
+# Default: show available commands
+default:
+    @just --list
+
+fmt: fmt-rs
+lint: lint-rs
+check: check-rs
+test: test-rs test-py
+
+# ============================================================================
+# Rust
+# ============================================================================
+
+fmt-rs:
+    cargo fmt -p qow
+
+lint-rs:
+    uv run --project {{justfile_directory()}} cargo clippy -p qow --all-features --all-targets
+
+check-rs:
+    uv run --project {{justfile_directory()}} cargo check -p qow --all-features
+
+test-rs:
+    cargo test -p qow
+
+# ============================================================================
+# Python
+# ============================================================================
+
+# Build qo first, then setup qow (shared uv workspace)
+py-setup:
+    uv sync --project {{justfile_directory()}} --group dev
+    just -f {{justfile_directory()}}/../qo/justfile py-dev
+
+# Build native module for development
+py-dev: py-setup
+    uv run --project {{justfile_directory()}} maturin develop
+
+test-py: py-dev
+    uv run --project {{justfile_directory()}} pytest tests/ -v -m "not integration"
+
+test-py-integration: py-dev
+    uv run --project {{justfile_directory()}} pytest tests/ -v -m integration
+
+# Type checking with pyright
+pyright:
+    uv run --project {{justfile_directory()}} pyright python/
+
+# Full type check (alias)
+typecheck: pyright

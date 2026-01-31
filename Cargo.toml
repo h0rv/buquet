@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "crates/qo",
+    "crates/qow",
+]
+
+default-members = [
+    "crates/qo",
+]
+
+resolver = "2"

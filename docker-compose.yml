@@ -1,0 +1,28 @@
+# Infrastructure only - run qo natively for development
+#
+# Usage:
+#   docker compose up -d        # Start LocalStack (S3)
+#   source crates/qo/examples/.env.example
+#   cargo run -p qo -- worker   # Run qo natively
+#
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - ./scripts/init-localstack.sh:/etc/localstack/init/ready.d/init.sh:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  localstack_data:
