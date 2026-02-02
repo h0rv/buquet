@@ -1,6 +1,6 @@
 # buquet
 
-Queue on object storage: simple task queue and workflow orchestration.
+Bucket queue: simple task queue and workflow orchestration.
 
 Works with any S3-compatible storage: [AWS S3](https://aws.amazon.com/s3/), [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), [MinIO](https://min.io/), [Tigris](https://www.tigrisdata.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces), and more.
 

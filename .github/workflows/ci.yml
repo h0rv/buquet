@@ -14,12 +14,10 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: taiki-e/install-action@just
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v5
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: just check-rs
@@ -27,12 +25,10 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: taiki-e/install-action@just
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v5
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: just test
@@ -40,12 +36,10 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: taiki-e/install-action@just
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -55,12 +49,10 @@ jobs:
   fmt:
     name: Format
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.11"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: taiki-e/install-action@just
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
@@ -69,8 +61,6 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.11"
     services:
       localstack:
         image: localstack/localstack:latest
@@ -85,10 +75,10 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v5
 
       - name: Setup S3 bucket
         run: |

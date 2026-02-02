@@ -126,6 +126,7 @@ impl SignalManager<S3Client> {
         let prefix = signal_prefix(wf_id, name);
 
         // Use start_after for cursor-based pagination
+        // Cursor is the full suffix including .json extension
         let start_after = cursor.map(|c| format!("{prefix}{c}"));
 
         let (keys, _) = self
@@ -138,12 +139,8 @@ impl SignalManager<S3Client> {
             let (data, _) = self.client.get_object(&key).await?;
             let signal = Signal::from_json(&data)?;
 
-            // Extract suffix (timestamp_uuid) from key
-            let suffix = key
-                .strip_prefix(&prefix)
-                .and_then(|s| s.strip_suffix(".json"))
-                .unwrap_or("")
-                .to_string();
+            // Extract suffix (timestamp_uuid.json) from key - includes .json for cursor use
+            let suffix = key.strip_prefix(&prefix).unwrap_or("").to_string();
 
             signals.push((suffix, signal));
         }
@@ -187,6 +184,7 @@ impl SignalManager<S3Client> {
     /// Number of signals available.
     pub async fn count(&self, wf_id: &str, name: &str, cursor: Option<&str>) -> Result<usize> {
         let prefix = signal_prefix(wf_id, name);
+        // Cursor is the full suffix including .json extension
         let start_after = cursor.map(|c| format!("{prefix}{c}"));
 
         let (keys, _) = self
