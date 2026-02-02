@@ -43,7 +43,7 @@ Phase 5: Integration & Testing
 No dependencies.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 ├── lib.rs
 └── models/
     ├── mod.rs
@@ -107,7 +107,7 @@ crates/qo/src/
 No dependencies.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── storage/
     ├── mod.rs
     ├── client.rs      # S3Client wrapper
@@ -168,7 +168,7 @@ Once both tracks complete:
 Depends on: Phase 1.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── queue/
     ├── mod.rs
     └── ops.rs         # Submit, get, list operations
@@ -215,7 +215,7 @@ crates/qo/src/
 Depends on: Phase 1.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── worker/
     ├── mod.rs
     ├── claim.rs       # Atomic claiming
@@ -286,7 +286,7 @@ Once both tracks complete:
 Depends on: Phase 2.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── worker/
     └── transitions.rs  # Complete, retry, fail
 ```
@@ -361,7 +361,7 @@ crates/qo/src/
 Depends on: Phase 2.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── worker/
     └── monitor.rs     # Background timeout checker
 ```
@@ -430,7 +430,7 @@ Once both tracks complete:
 Depends on: Phase 3.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 └── worker/
     └── runner.rs      # Main loop with shutdown handling
 ```
@@ -493,7 +493,7 @@ crates/qo/src/
 Depends on: Phase 3.
 
 ```
-crates/qo/src/
+crates/buquet/src/
 ├── main.rs
 └── cli/
     ├── mod.rs
@@ -510,7 +510,7 @@ crates/qo/src/
 **Deliverables:**
 - [ ] CLI structure using `clap` derive:
   ```
-  qo <COMMAND>
+  buquet <COMMAND>
 
   Commands:
     submit   Submit a new task
@@ -522,29 +522,29 @@ crates/qo/src/
     workers  List registered workers
     worker   Run a worker
   ```
-- [ ] `qo submit --type <TYPE> --input <JSON> [--timeout <SECS>] [--retries <N>]`
+- [ ] `buquet submit --type <TYPE> --input <JSON> [--timeout <SECS>] [--retries <N>]`
   - Prints task ID on success
-- [ ] `qo status <TASK_ID>`
+- [ ] `buquet status <TASK_ID>`
   - Shows current task state (formatted)
   - Shows `available_at` if in future (task is in backoff)
   - Shows `lease_expires_at` countdown if running
-- [ ] `qo history <TASK_ID>`
+- [ ] `buquet history <TASK_ID>`
   - Shows version timeline with timestamps and status changes
-- [ ] `qo list [--shard <HEX>] [--status <STATUS>] [--limit <N>]`
+- [ ] `buquet list [--shard <HEX>] [--status <STATUS>] [--limit <N>]`
   - Lists tasks matching criteria
   - Default: all shards, all statuses (except Archived), limit 100
   - Show `available_at` for pending tasks in backoff
-- [ ] `qo replay <TASK_ID>`
+- [ ] `buquet replay <TASK_ID>`
   - GET failed task, PUT with `status = Pending`, `retry_count = 0`, `available_at = now`
-- [ ] `qo archive <TASK_ID>`
+- [ ] `buquet archive <TASK_ID>`
   - GET completed/failed task, PUT with `status = Archived`
-- [ ] `qo workers`
+- [ ] `buquet workers`
   - LIST `workers/`, GET each, display:
     - worker_id, started_at, last_heartbeat
     - current_task (if any)
     - tasks_completed, tasks_failed
     - health status (active/stale based on heartbeat age)
-- [ ] `qo worker [--id <ID>] [--shards <SHARDS>]`
+- [ ] `buquet worker [--id <ID>] [--shards <SHARDS>]`
   - Runs worker loop
   - Default ID: hostname + random suffix
   - Default shards: all (0-f)
@@ -637,14 +637,14 @@ Once all tracks complete:
 ### Deliverables
 
 **Integration Tests:**
-- [ ] `crates/qo/tests/integration/submit_claim_complete.rs` - happy path
-- [ ] `crates/qo/tests/integration/concurrent_claim.rs` - multiple workers race
-- [ ] `crates/qo/tests/integration/retry_exhaustion.rs` - task fails until Failed status
-- [ ] `crates/qo/tests/integration/timeout_recovery.rs` - monitor recovers stuck task
-- [ ] `crates/qo/tests/integration/pagination_starvation.rs` - ensures paginated LIST makes progress
-- [ ] `crates/qo/tests/integration/index_cleanup.rs` - ready/lease orphans are harmless
-- [ ] `crates/qo/tests/integration/graceful_shutdown.rs` - no lost tasks
-- [ ] `crates/qo/tests/integration/version_history.rs` - history shows all transitions
+- [ ] `crates/buquet/tests/integration/submit_claim_complete.rs` - happy path
+- [ ] `crates/buquet/tests/integration/concurrent_claim.rs` - multiple workers race
+- [ ] `crates/buquet/tests/integration/retry_exhaustion.rs` - task fails until Failed status
+- [ ] `crates/buquet/tests/integration/timeout_recovery.rs` - monitor recovers stuck task
+- [ ] `crates/buquet/tests/integration/pagination_starvation.rs` - ensures paginated LIST makes progress
+- [ ] `crates/buquet/tests/integration/index_cleanup.rs` - ready/lease orphans are harmless
+- [ ] `crates/buquet/tests/integration/graceful_shutdown.rs` - no lost tasks
+- [ ] `crates/buquet/tests/integration/version_history.rs` - history shows all transitions
 
 **Test Infrastructure:**
 - [ ] Docker Compose: Garage + test runner
@@ -712,7 +712,7 @@ Once all tracks complete:
 ## File Structure (Final)
 
 ```
-crates/qo/src/
+crates/buquet/src/
 ├── lib.rs
 ├── main.rs
 ├── cli/
@@ -752,7 +752,7 @@ ui/
 ├── app.js
 └── styles.css
 
-crates/qo/tests/
+crates/buquet/tests/
 └── integration/
     ├── common/mod.rs
     ├── submit_claim_complete.rs

@@ -15,7 +15,7 @@ Millions of tasks with frequent monitor intervals generate excessive S3 requests
 
 Implemented time-bucketed scans with incremental cursors for both the Monitor and Sweeper.
 
-### Monitor Changes (`crates/qo/src/worker/monitor.rs`)
+### Monitor Changes (`crates/buquet/src/worker/monitor.rs`)
 
 1. Added `ShardCursor` struct to track scan position per shard:
    - `continuation_token`: S3 LIST continuation token
@@ -34,7 +34,7 @@ Implemented time-bucketed scans with incremental cursors for both the Monitor an
    - `reset_all_cursors()`: Reset all shards
    - `all_shards_scanned()`: Check if all shards completed at least one full scan
 
-### Sweeper Changes (`crates/qo/src/worker/sweeper.rs`)
+### Sweeper Changes (`crates/buquet/src/worker/sweeper.rs`)
 
 1. Added `SweepMode` enum:
    - `Continuous` (default): Incremental sweeping with cursors
@@ -55,7 +55,7 @@ Implemented time-bucketed scans with incremental cursors for both the Monitor an
 
 5. Added `truncated` field to `SweepReport` to indicate partial scans
 
-### Config Changes (`crates/qo/src/config.rs`)
+### Config Changes (`crates/buquet/src/config.rs`)
 
 Added new environment variables:
 - `QO_MONITOR_MAX_TASKS_PER_SCAN`: Limit tasks per monitor cycle

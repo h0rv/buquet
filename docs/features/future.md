@@ -22,8 +22,8 @@ These features require more design work but are worth tracking for future develo
 **Status: Implemented** - See [scheduling.md](scheduling.md)
 
 - One-shot scheduling via `schedule_at` parameter
-- Recurring schedules via `qo schedule` CLI and cron expressions
-- Scheduler daemon via `qo schedule run`
+- Recurring schedules via `buquet schedule` CLI and cron expressions
+- Scheduler daemon via `buquet schedule run`
 
 ---
 

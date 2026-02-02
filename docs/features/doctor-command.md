@@ -1,4 +1,4 @@
-# `qo doctor` Command
+# `buquet doctor` Command
 
 > **Status:** COMPLETED (2026-01-26)
 > **Effort:** ~200 lines of Rust
@@ -8,28 +8,28 @@ A diagnostic command that validates the environment and S3 connectivity.
 
 ## Why
 
-When something doesn't work, users waste time debugging. `qo doctor` immediately tells them what's wrong and how to fix it.
+When something doesn't work, users waste time debugging. `buquet doctor` immediately tells them what's wrong and how to fix it.
 
 ## Usage
 
 ```bash
 # Basic checks (read-only)
-qo doctor
+buquet doctor
 
 # Include write test (creates/deletes test object)
-qo doctor --write-test
+buquet doctor --write-test
 ```
 
 ## Example Output
 
 ### Success
 ```
-$ qo doctor
-qo doctor - checking environment
+$ buquet doctor
+buquet doctor - checking environment
 
 ✓ Environment variables set
 ✓ S3 client initialized
-✓ Bucket 'qo-dev' exists and is accessible
+✓ Bucket 'buquet-dev' exists and is accessible
 ✓ Can list objects (found 16 task shards)
 ✓ 2 healthy worker(s) online
 
@@ -38,8 +38,8 @@ All checks passed!
 
 ### Failure with suggestions
 ```
-$ qo doctor
-qo doctor - checking environment
+$ buquet doctor
+buquet doctor - checking environment
 
 ✓ Environment variables set
 ✗ S3 connection failed: connection refused
@@ -61,7 +61,7 @@ pub struct DoctorArgs {
 }
 
 async fn doctor(args: DoctorArgs) -> Result<()> {
-    println!("qo doctor - checking environment\n");
+    println!("buquet doctor - checking environment\n");
 
     // 1. Check environment variables
     check_env("S3_BUCKET")?;
@@ -92,7 +92,7 @@ async fn doctor(args: DoctorArgs) -> Result<()> {
 
     // 6. Optional write test
     if args.write_test {
-        let test_key = format!("_qo_doctor_test_{}", Uuid::new_v4());
+        let test_key = format!("_buquet_doctor_test_{}", Uuid::new_v4());
         client.put_object(&test_key, b"test").await?;
         client.delete_object(&test_key).await?;
         println!("✓ Write test passed (created and deleted test object)");

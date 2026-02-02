@@ -1,15 +1,15 @@
-# Feature: Workflow CLI (qo-workflow)
+# Feature: Workflow CLI (buquet-workflow)
 
 ## Status: Implemented
 
 ## Overview
-`qo-workflow` is a small CLI for inspecting workflow state stored in S3 and for
+`buquet-workflow` is a small CLI for inspecting workflow state stored in S3 and for
 detecting stalled workflows via the sweeper.
 
-This CLI is part of the separate `qow` package (not core qo).
+This CLI is part of the separate `buquet-workflow` package (not core buquet).
 
 ## Requirements
-The CLI uses the same S3 configuration as qo:
+The CLI uses the same S3 configuration as buquet:
 
 - `S3_BUCKET` (required)
 - `S3_ENDPOINT` (optional)
@@ -20,37 +20,37 @@ The CLI uses the same S3 configuration as qo:
 
 ```bash
 # Run directly with Cargo
-cargo run -p qow --bin qo-workflow -- <command>
+cargo run -p buquet-workflow --bin buquet-workflow -- <command>
 
 # Or install locally
-cargo install --path crates/qow
-qo-workflow <command>
+cargo install --path crates/buquet-workflow
+buquet-workflow <command>
 ```
 
 ## Commands
 
 ### List workflows
 ```bash
-qo-workflow list --prefix wf- --limit 100
-qo-workflow list --json
+buquet-workflow list --prefix wf- --limit 100
+buquet-workflow list --json
 ```
 
 ### Inspect workflow status
 ```bash
-qo-workflow status wf-123
-qo-workflow status wf-123 --json
+buquet-workflow status wf-123
+buquet-workflow status wf-123 --json
 ```
 
 ### Sweeper (stall detection)
 ```bash
 # One-shot scan
-qo-workflow sweeper --once
+buquet-workflow sweeper --once
 
 # Continuous scan
-qo-workflow sweeper --interval 300
+buquet-workflow sweeper --interval 300
 
 # Filter + JSON output
-qo-workflow sweeper --prefix wf- --limit 1000 --json
+buquet-workflow sweeper --prefix wf- --limit 1000 --json
 ```
 
 **Note:** The sweeper CLI only reports workflows that need recovery. It does not

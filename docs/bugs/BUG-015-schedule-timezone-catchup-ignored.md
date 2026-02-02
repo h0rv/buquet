@@ -14,8 +14,8 @@ Schedules configured for non-UTC timezones ran at the wrong time. Missed runs we
 - Scheduler downtime over a scheduled window does not trigger missed runs.
 
 ## Location
-- `crates/qo/src/queue/schedule.rs:30-129`
-- `crates/qo/src/main.rs:653-671`
+- `crates/buquet/src/queue/schedule.rs:30-129`
+- `crates/buquet/src/main.rs:653-671`
 
 ## Proposed Fix
 For simplicity, enforce UTC-only scheduling and remove the unused fields.

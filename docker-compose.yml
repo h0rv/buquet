@@ -1,9 +1,9 @@
-# Infrastructure only - run qo natively for development
+# Infrastructure only - run buquet natively for development
 #
 # Usage:
 #   docker compose up -d        # Start LocalStack (S3)
-#   source crates/qo/examples/.env.example
-#   cargo run -p qo -- worker   # Run qo natively
+#   source crates/buquet/examples/.env.example
+#   cargo run -p buquet -- worker   # Run buquet natively
 #
 services:
   localstack:

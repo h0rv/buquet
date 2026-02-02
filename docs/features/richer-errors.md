@@ -55,12 +55,12 @@ Error: Task not found: 550e8400-e29b-41d4-a716-446655440000
 Suggestions:
   - The task may have been archived
   - Check the task ID is correct
-  - Try `qo history 550e8400...` to see if it was previously processed
+  - Try `buquet history 550e8400...` to see if it was previously processed
 ```
 
 ### Permission Errors
 ```
-Error: Access denied to bucket 'qo-dev'
+Error: Access denied to bucket 'buquet-dev'
 
 Cause: S3 returned 403 Forbidden
 
@@ -99,12 +99,12 @@ impl TaskError {
             }
             TaskError::NotFound { .. } => {
                 "The task may have been archived or never existed. \
-                 Check the task ID and try `qo history <id>` to see \
+                 Check the task ID and try `buquet history <id>` to see \
                  if it was previously processed."
             }
             TaskError::AlreadyCompleted { .. } => {
                 "This task has already finished. Check the task status \
-                 with `qo status <id>` to see the result."
+                 with `buquet status <id>` to see the result."
             }
         }
     }
@@ -138,9 +138,9 @@ fn main() -> Result<()> {
 
 ## Files to Change
 
-- `crates/qo/src/models/task.rs` - Enhance `TaskError` with suggestions
-- `crates/qo/src/storage/error.rs` - Enhance `StorageError` with context
-- `crates/qo/src/main.rs` - Use rich error display in CLI
+- `crates/buquet/src/models/task.rs` - Enhance `TaskError` with suggestions
+- `crates/buquet/src/storage/error.rs` - Enhance `StorageError` with context
+- `crates/buquet/src/main.rs` - Use rich error display in CLI
 
 ## Dependencies
 

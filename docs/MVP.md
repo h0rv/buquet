@@ -635,31 +635,31 @@ aws s3api put-bucket-cors \
 
 ```bash
 # Submit a task
-qo submit --type send_email --input '{"to": "user@example.com"}'
+buquet submit --type send_email --input '{"to": "user@example.com"}'
 
 # Get task status (includes current state)
-qo status <task_id>
+buquet status <task_id>
 
 # Get task history (all versions)
-qo history <task_id>
+buquet history <task_id>
 
 # List tasks
-qo list [--shard 0-f] [--status pending|running|completed|failed|archived]
+buquet list [--shard 0-f] [--status pending|running|completed|failed|archived]
 
 # Replay failed task (reset to pending with available_at=now)
-qo replay <task_id>
+buquet replay <task_id>
 
 # Archive completed/failed tasks
-qo archive <task_id>
+buquet archive <task_id>
 
 # List workers
-qo workers
+buquet workers
 
 # Run worker (embedded monitor by default)
-qo worker [--id worker-1] [--shards 0,1,2,3] [--index-mode hybrid] [--no-monitor]
+buquet worker [--id worker-1] [--shards 0,1,2,3] [--index-mode hybrid] [--no-monitor]
 
 # Run monitor (timeouts + index sweep)
-qo monitor [--check-interval 30] [--worker-health-threshold 60] [--sweep-interval 300]
+buquet monitor [--check-interval 30] [--worker-health-threshold 60] [--sweep-interval 300]
 ```
 
 ---

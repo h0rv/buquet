@@ -16,4 +16,4 @@ async def handle(task):
     return {"output_ref": await s3.put(f"results/{task.id}.json", result)}
 ```
 
-This keeps qo simple and avoids complexity around credentials, cross-bucket access, and streaming semantics.
+This keeps buquet simple and avoids complexity around credentials, cross-bucket access, and streaming semantics.

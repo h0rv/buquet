@@ -1,12 +1,12 @@
 # Version History Retention Guide
 
-qo uses S3 bucket versioning to automatically maintain a complete audit trail of every task state transition. While this provides powerful debugging and compliance capabilities, it can also drive storage costs at scale without proper lifecycle management.
+buquet uses S3 bucket versioning to automatically maintain a complete audit trail of every task state transition. While this provides powerful debugging and compliance capabilities, it can also drive storage costs at scale without proper lifecycle management.
 
 This guide explains how version history works, its cost implications, and how to configure retention policies for your use case.
 
 ## How Version History Works
 
-Every task in qo is stored as a single JSON object at `tasks/{shard}/{task_id}.json`. When S3 versioning is enabled, each state change creates a new version:
+Every task in buquet is stored as a single JSON object at `tasks/{shard}/{task_id}.json`. When S3 versioning is enabled, each state change creates a new version:
 
 ```
 Task Lifecycle Versions:
@@ -60,7 +60,7 @@ Beyond storage, version history affects:
 
 1. **`get_history()` latency**: Retrieving task history requires `ListObjectVersions` followed by individual `GET` requests per version. High version counts increase latency.
 
-2. **LIST operations**: While qo uses index prefixes to avoid listing task objects directly, administrative queries and the dashboard may list versions.
+2. **LIST operations**: While buquet uses index prefixes to avoid listing task objects directly, administrative queries and the dashboard may list versions.
 
 ## Recommended Lifecycle Policies
 
@@ -68,7 +68,7 @@ S3 lifecycle policies automatically manage version retention. Configure these at
 
 ### Policy Structure
 
-A lifecycle policy for qo should:
+A lifecycle policy for buquet should:
 1. Keep current versions indefinitely (active tasks)
 2. Retain non-current versions for your audit window
 3. Optionally transition older versions to cheaper storage
@@ -165,19 +165,19 @@ Save your policy to a file (e.g., `lifecycle.json`) and apply:
 ```bash
 # Apply lifecycle policy
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket your-qo-bucket \
+  --bucket your-buquet-bucket \
   --lifecycle-configuration file://lifecycle.json
 
 # Verify the policy
 aws s3api get-bucket-lifecycle-configuration \
-  --bucket your-qo-bucket
+  --bucket your-buquet-bucket
 ```
 
 ### AWS Console
 
 1. Navigate to S3 > Your Bucket > Management > Lifecycle rules
 2. Click "Create lifecycle rule"
-3. Name: `qo-version-retention`
+3. Name: `buquet-version-retention`
 4. Filter: Prefix `tasks/`
 5. Actions:
    - Select "Permanently delete noncurrent versions of objects"
@@ -187,22 +187,22 @@ aws s3api get-bucket-lifecycle-configuration \
 ### Terraform
 
 ```hcl
-resource "aws_s3_bucket" "qo" {
-  bucket = "your-qo-bucket"
+resource "aws_s3_bucket" "buquet" {
+  bucket = "your-buquet-bucket"
 }
 
-resource "aws_s3_bucket_versioning" "qo" {
-  bucket = aws_s3_bucket.qo.id
+resource "aws_s3_bucket_versioning" "buquet" {
+  bucket = aws_s3_bucket.buquet.id
   versioning_configuration {
     status = "Enabled"
   }
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "qo" {
-  bucket = aws_s3_bucket.qo.id
+resource "aws_s3_bucket_lifecycle_configuration" "buquet" {
+  bucket = aws_s3_bucket.buquet.id
 
   rule {
-    id     = "qo-version-retention"
+    id     = "buquet-version-retention"
     status = "Enabled"
 
     filter {
@@ -219,11 +219,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "qo" {
 ### Terraform with Tiered Storage
 
 ```hcl
-resource "aws_s3_bucket_lifecycle_configuration" "qo_compliance" {
-  bucket = aws_s3_bucket.qo.id
+resource "aws_s3_bucket_lifecycle_configuration" "buquet_compliance" {
+  bucket = aws_s3_bucket.buquet.id
 
   rule {
-    id     = "qo-version-retention-compliance"
+    id     = "buquet-version-retention-compliance"
     status = "Enabled"
 
     filter {
@@ -309,7 +309,7 @@ Track version accumulation with S3 inventory or bucket metrics:
 ```bash
 # Count versions for a specific task
 aws s3api list-object-versions \
-  --bucket your-qo-bucket \
+  --bucket your-buquet-bucket \
   --prefix "tasks/" \
   --query 'length(Versions)'
 
@@ -317,7 +317,7 @@ aws s3api list-object-versions \
 aws cloudwatch get-metric-statistics \
   --namespace AWS/S3 \
   --metric-name BucketSizeBytes \
-  --dimensions Name=BucketName,Value=your-qo-bucket Name=StorageType,Value=StandardStorage \
+  --dimensions Name=BucketName,Value=your-buquet-bucket Name=StorageType,Value=StandardStorage \
   --start-time $(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ) \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
   --period 86400 \

@@ -91,12 +91,12 @@ S3 ListObjects uses `start_after=prefix+cursor` to list signals after the cursor
 - Cross-signal-name ordering is not guaranteed.
 
 ### At-Least-Once Delivery
-Signals are **at-least-once**, consistent with qo's task execution model:
+Signals are **at-least-once**, consistent with buquet's task execution model:
 - The same signal may be sent multiple times (sender retries, duplicates).
 - Signal handlers must be idempotent.
-- qo does not deduplicate signals at the infrastructure level.
+- buquet does not deduplicate signals at the infrastructure level.
 
-This is intentional: qo doesn't solve idempotency for tasks, and doesn't solve
+This is intentional: buquet doesn't solve idempotency for tasks, and doesn't solve
 it for signals either. Handlers own idempotency.
 
 ### Consumption

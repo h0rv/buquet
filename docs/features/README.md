@@ -1,6 +1,6 @@
-# qo Feature Roadmap
+# buquet Feature Roadmap
 
-Features that would elevate qo from a solid task queue to an exceptional one.
+Features that would elevate buquet from a solid task queue to an exceptional one.
 
 ## Current State: 8.5/10
 
@@ -33,8 +33,8 @@ Features that would elevate qo from a solid task queue to an exceptional one.
 | Feature | Status | File |
 |---------|--------|------|
 | Shell Completions | **COMPLETED** | [shell-completions.md](./shell-completions.md) |
-| `qo doctor` Command | **COMPLETED** | [doctor-command.md](./doctor-command.md) |
-| Filter `qo list` by Task Type | **COMPLETED** | [list-task-type-filter.md](./list-task-type-filter.md) |
+| `buquet doctor` Command | **COMPLETED** | [doctor-command.md](./doctor-command.md) |
+| Filter `buquet list` by Task Type | **COMPLETED** | [list-task-type-filter.md](./list-task-type-filter.md) |
 
 ### Tier 2: Production Essentials (2-4 hours each)
 
@@ -52,7 +52,7 @@ Features that would elevate qo from a solid task queue to an exceptional one.
 
 | Feature | Status | File |
 |---------|--------|------|
-| `qo tail` - Live Task Stream | **COMPLETED** | [tail-command.md](./tail-command.md) |
+| `buquet tail` - Live Task Stream | **COMPLETED** | [tail-command.md](./tail-command.md) |
 | Richer Error Messages | Planned | [richer-errors.md](./richer-errors.md) |
 | Configuration File Support | **COMPLETED** | [config-files.md](./config-files.md) |
 | OpenTelemetry Tracing | Planned | [opentelemetry.md](./opentelemetry.md) |
@@ -103,11 +103,11 @@ Example: Rate limiting reuses `available_at` via `RescheduleError`. No token buc
 10. ~~Config files~~ - **DONE**
 11. OpenTelemetry - for complex deployments
 12. ~~Shell completions~~ - **DONE**
-13. ~~`qo doctor`~~ - **DONE**
+13. ~~`buquet doctor`~~ - **DONE**
 14. ~~Task type filter~~ - **DONE**
 15. ~~Metrics~~ - **DONE** (uses `metrics` crate facade)
 16. ~~Worker lifecycle hooks~~ - **DONE**
 17. ~~Bulk submission~~ - **DONE**
-18. ~~`qo tail`~~ - **DONE**
+18. ~~`buquet tail`~~ - **DONE**
 19. ~~Task cancellation~~ - **DONE**
 20. ~~Task expiration/TTL~~ - **DONE**

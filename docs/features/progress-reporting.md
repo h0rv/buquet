@@ -15,7 +15,7 @@ Progress is stored in the task object and visible via API, CLI, and UI.
 | Simple, boring, reliable | Just a field update, uses existing CAS pattern |
 | No coordination services | No pub/sub, polling-based progress checks |
 | Crash-safe | Progress persisted, visible after restart |
-| Debuggable | `qo status` shows progress, history shows updates |
+| Debuggable | `buquet status` shows progress, history shows updates |
 
 ## Problem
 
@@ -62,7 +62,7 @@ All progress fields are optional. Use what makes sense for your task.
 ### Python
 
 ```python
-from qo import connect, Worker
+from buquet import connect, Worker
 
 queue = await connect(bucket="my-queue")
 worker = Worker(queue, "worker-1", queue.all_shards())
@@ -120,7 +120,7 @@ await context.report_progress(percent=50, throttle_seconds=5)
 ### Rust
 
 ```rust
-use qo::{Queue, Worker, TaskHandler, TaskContext};
+use buquet::{Queue, Worker, TaskHandler, TaskContext};
 
 struct BatchProcessor;
 
@@ -152,7 +152,7 @@ impl TaskHandler for BatchProcessor {
 
 ```bash
 # Check task progress
-qo status abc123
+buquet status abc123
 # Output:
 #   Task: abc123
 #   Type: batch_process
@@ -162,14 +162,14 @@ qo status abc123
 #   Updated: 30 seconds ago
 
 # Watch progress (polls every 2 seconds)
-qo status abc123 --watch
-qo status abc123 -w
+buquet status abc123 --watch
+buquet status abc123 -w
 
 # Watch with custom interval
-qo status abc123 --watch --interval 5
+buquet status abc123 --watch --interval 5
 
 # JSON output for scripting
-qo status abc123 --json | jq '.progress'
+buquet status abc123 --json | jq '.progress'
 ```
 
 ## Implementation
@@ -288,7 +288,7 @@ Clamped to 100. Logged as warning.
 Progress updates create new task versions:
 
 ```bash
-$ qo history abc123
+$ buquet history abc123
 
 Version 1: pending (created)
 Version 2: running (claimed)
@@ -305,8 +305,8 @@ throttling and consider version history retention policies.
 ## Metrics
 
 ```
-qo_progress_updates_total{task_type}
-qo_progress_update_latency_seconds{task_type}
+buquet_progress_updates_total{task_type}
+buquet_progress_update_latency_seconds{task_type}
 ```
 
 ## UI Integration
@@ -325,11 +325,11 @@ Last updated: 30 seconds ago
 
 ### Files to Change
 
-- `crates/qo/src/models/task.rs` - Add `Progress` struct, `progress` field
-- `crates/qo/src/worker/context.rs` (new) - `TaskContext` with `report_progress()`
-- `crates/qo/src/worker/runner.rs` - Pass context to handlers
-- `crates/qo/src/python/worker.rs` - Python bindings for context
-- `crates/qo/src/cli/status.rs` - Display progress, add `--watch` flag
+- `crates/buquet/src/models/task.rs` - Add `Progress` struct, `progress` field
+- `crates/buquet/src/worker/context.rs` (new) - `TaskContext` with `report_progress()`
+- `crates/buquet/src/worker/runner.rs` - Pass context to handlers
+- `crates/buquet/src/python/worker.rs` - Python bindings for context
+- `crates/buquet/src/cli/status.rs` - Display progress, add `--watch` flag
 
 ### Estimated Effort
 

@@ -8,7 +8,7 @@ Store and validate JSON Schemas for task inputs/outputs. Format-agnostic - bring
 
 ## Philosophy
 
-Schemas are just another S3 object. qo stores them, retrieves them, and validates against them. That's it.
+Schemas are just another S3 object. buquet stores them, retrieves them, and validates against them. That's it.
 
 No version tracking. No automatic validation. No sync enforcement. No control plane.
 
@@ -63,20 +63,20 @@ schemas = await queue.list_schemas()  # ["send_email", "process_order"]
 
 ```bash
 # Store
-qo schema publish send_email schema.json
+buquet schema publish send_email schema.json
 
 # Retrieve
-qo schema get send_email
+buquet schema get send_email
 
 # Validate
-qo schema validate send_email --input '{"to": "x"}'
-qo schema validate send_email --output '{"sent": true}'
+buquet schema validate send_email --input '{"to": "x"}'
+buquet schema validate send_email --output '{"sent": true}'
 
 # List
-qo schema list
+buquet schema list
 
 # Delete
-qo schema delete send_email
+buquet schema delete send_email
 ```
 
 ### Rust
@@ -94,9 +94,9 @@ queue.validate_input("send_email", &input_json)?;
 
 ## User Responsibilities
 
-qo follows the same philosophy as the rest of the system: **simple primitives, user handles coordination.**
+buquet follows the same philosophy as the rest of the system: **simple primitives, user handles coordination.**
 
-| Concern | qo's job | User's job |
+| Concern | buquet's job | User's job |
 |---------|----------|------------|
 | Schema storage | Store/retrieve from S3 | Decide what schema to publish |
 | Validation | Validate JSON against schema | Decide when to call validate |
@@ -154,11 +154,11 @@ aws s3 ls s3://my-bucket/schemas/
 
 ### Files to Change
 
-- `crates/qo/src/queue/schema.rs` (new) - ~30 lines: publish, get, list, delete
-- `crates/qo/src/queue/validate.rs` (new) - ~20 lines: validate against schema
-- `crates/qo/src/python/queue.rs` - Add schema methods
-- `crates/qo/src/cli/commands.rs` - Add `Schema` subcommand
-- `crates/qo/python/qo/_qo.pyi` - Type stubs
+- `crates/buquet/src/queue/schema.rs` (new) - ~30 lines: publish, get, list, delete
+- `crates/buquet/src/queue/validate.rs` (new) - ~20 lines: validate against schema
+- `crates/buquet/src/python/queue.rs` - Add schema methods
+- `crates/buquet/src/cli/commands.rs` - Add `Schema` subcommand
+- `crates/buquet/python/buquet/_buquet.pyi` - Type stubs
 
 ### Dependencies
 

@@ -2,7 +2,7 @@
 
 > **Status:** COMPLETED (2026-01-26)
 
-Auto-generate bash/zsh/fish completions for the `qo` CLI.
+Auto-generate bash/zsh/fish completions for the `buquet` CLI.
 
 ## Why
 
@@ -12,19 +12,19 @@ First-run experience is critical. Tab completion makes the tool feel polished an
 
 ```bash
 # Bash
-qo completions bash > ~/.local/share/bash-completion/completions/qo
+buquet completions bash > ~/.local/share/bash-completion/completions/buquet
 
 # Zsh (add to fpath)
-qo completions zsh > ~/.zfunc/_qo
+buquet completions zsh > ~/.zfunc/_buquet
 
 # Fish
-qo completions fish > ~/.config/fish/completions/qo.fish
+buquet completions fish > ~/.config/fish/completions/buquet.fish
 
 # PowerShell
-qo completions powershell > qo.ps1
+buquet completions powershell > buquet.ps1
 
 # Elvish
-qo completions elvish > qo.elv
+buquet completions elvish > buquet.elv
 ```
 
 After installing, restart your shell or source the completion file.
@@ -34,7 +34,7 @@ After installing, restart your shell or source the completion file.
 Added `clap_complete` dependency and a `Completions` subcommand:
 
 ```rust
-// crates/qo/src/cli/commands.rs
+// crates/buquet/src/cli/commands.rs
 use clap_complete::Shell;
 
 #[derive(Subcommand, Debug)]
@@ -50,14 +50,14 @@ pub enum Commands {
 ```
 
 ```rust
-// crates/qo/src/main.rs
+// crates/buquet/src/main.rs
 use clap::CommandFactory;
 use clap_complete::generate;
 
 // Handle before S3 init (doesn't need credentials)
 if let Commands::Completions { shell } = cli.command {
     let mut cmd = Cli::command();
-    generate(shell, &mut cmd, "qo", &mut io::stdout());
+    generate(shell, &mut cmd, "buquet", &mut io::stdout());
     return Ok(());
 }
 ```
@@ -65,8 +65,8 @@ if let Commands::Completions { shell } = cli.command {
 ## Files Changed
 
 - `Cargo.toml` - Added `clap_complete = "4"`
-- `crates/qo/src/cli/commands.rs` - Added `Completions` variant
-- `crates/qo/src/main.rs` - Added handler before S3 initialization
+- `crates/buquet/src/cli/commands.rs` - Added `Completions` variant
+- `crates/buquet/src/main.rs` - Added handler before S3 initialization
 - `docs/getting-started.md` - Added usage documentation
 
 ## Effort

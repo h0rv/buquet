@@ -1,18 +1,18 @@
 # S3 Provider Compatibility Guide
 
-qo requires specific S3 features to function correctly. Not all "S3-compatible" storage providers implement these features fully. This guide helps you choose the right provider and verify compatibility.
+buquet requires specific S3 features to function correctly. Not all "S3-compatible" storage providers implement these features fully. This guide helps you choose the right provider and verify compatibility.
 
 ---
 
 ## Required S3 Features
 
-qo depends on these S3 capabilities:
+buquet depends on these S3 capabilities:
 
 ### 1. Strong Read-After-Write Consistency
 
 **Required**: Yes (critical)
 
-After writing an object, any subsequent read must return the latest version immediately. qo relies on this for:
+After writing an object, any subsequent read must return the latest version immediately. buquet relies on this for:
 - Task state transitions (pending -> running -> completed)
 - Worker coordination
 - Accurate queue listings
@@ -23,7 +23,7 @@ Without strong consistency, workers may claim the same task, miss updates, or se
 
 **Required**: Yes (critical)
 
-qo uses conditional writes for atomic operations:
+buquet uses conditional writes for atomic operations:
 
 - **`If-None-Match: *`** - Creates an object only if it doesn't exist. Used for:
   - Task claiming (prevents duplicate processing)
@@ -33,7 +33,7 @@ qo uses conditional writes for atomic operations:
   - Optimistic locking on state transitions
   - Preventing lost updates during concurrent modifications
 
-Without conditional writes, qo cannot guarantee exactly-once task processing.
+Without conditional writes, buquet cannot guarantee exactly-once task processing.
 
 ### 3. Object Versioning
 
@@ -44,13 +44,13 @@ Versioning enables:
 - Debugging failed tasks by viewing previous states
 - Audit trails for compliance
 
-qo works without versioning, but you lose historical visibility.
+buquet works without versioning, but you lose historical visibility.
 
 ### 4. LIST Pagination (Continuation Tokens)
 
 **Required**: Yes
 
-S3 LIST operations return a maximum of 1000 objects per request. qo uses continuation tokens to paginate through larger result sets when:
+S3 LIST operations return a maximum of 1000 objects per request. buquet uses continuation tokens to paginate through larger result sets when:
 - Discovering pending tasks across shards
 - Building dashboard views
 - Running cleanup operations
@@ -61,7 +61,7 @@ All major S3-compatible providers support this.
 
 **Required**: Yes
 
-qo uses standard S3 operations:
+buquet uses standard S3 operations:
 - `PutObject` with conditional headers
 - `GetObject`
 - `DeleteObject`
@@ -118,7 +118,7 @@ Providers must implement these operations with standard semantics.
 
 ## Testing Your Provider
 
-Before deploying qo to a new provider, verify compatibility with these tests.
+Before deploying buquet to a new provider, verify compatibility with these tests.
 
 ### Quick Compatibility Check
 
@@ -130,8 +130,8 @@ Before deploying qo to a new provider, verify compatibility with these tests.
 set -e
 
 ENDPOINT="${S3_ENDPOINT:-http://localhost:9000}"
-BUCKET="${BUCKET:-qo-test}"
-KEY="qo-compat-test-$(date +%s)"
+BUCKET="${BUCKET:-buquet-test}"
+KEY="buquet-compat-test-$(date +%s)"
 
 echo "Testing S3 compatibility at $ENDPOINT"
 echo "Using bucket: $BUCKET"
@@ -231,20 +231,20 @@ aws s3api delete-object \
     --output text > /dev/null
 
 echo ""
-echo "All tests passed! Provider is compatible with qo."
+echo "All tests passed! Provider is compatible with buquet."
 ```
 
 ### Running the Test
 
 ```bash
 # For local Garage (Docker Compose)
-S3_ENDPOINT=http://localhost:3902 BUCKET=qo ./s3-compat-test.sh
+S3_ENDPOINT=http://localhost:3902 BUCKET=buquet ./s3-compat-test.sh
 
 # For AWS S3
 AWS_PROFILE=myprofile BUCKET=my-bucket ./s3-compat-test.sh
 
 # For MinIO
-S3_ENDPOINT=http://localhost:9000 BUCKET=qo ./s3-compat-test.sh
+S3_ENDPOINT=http://localhost:9000 BUCKET=buquet ./s3-compat-test.sh
 ```
 
 ---
@@ -255,13 +255,13 @@ S3_ENDPOINT=http://localhost:9000 BUCKET=qo ./s3-compat-test.sh
 
 **Status**: Fully compatible (reference implementation)
 
-AWS S3 is the reference implementation for qo. All features work as expected.
+AWS S3 is the reference implementation for buquet. All features work as expected.
 
 **Configuration**:
 ```bash
 export S3_ENDPOINT=https://s3.us-east-1.amazonaws.com
 export S3_REGION=us-east-1
-export S3_BUCKET=my-qo-bucket
+export S3_BUCKET=my-buquet-bucket
 export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 ```
@@ -270,7 +270,7 @@ export AWS_SECRET_ACCESS_KEY=...
 - Strong consistency since December 2020
 - `If-None-Match` since August 2024
 - `If-Match` since November 2024
-- Conditional DELETE since September 2025 (optional for qo)
+- Conditional DELETE since September 2025 (optional for buquet)
 - Versioning fully supported
 
 **Cost** (2025 pricing):
@@ -293,7 +293,7 @@ MinIO is the best choice for self-hosted deployments. It tracks AWS S3 features 
 ```bash
 export S3_ENDPOINT=http://minio:9000
 export S3_REGION=us-east-1
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=minioadmin
 export AWS_SECRET_ACCESS_KEY=minioadmin
 ```
@@ -325,15 +325,15 @@ services:
 
 ### LocalStack
 
-**Status**: Fully compatible (default for qo local development)
+**Status**: Fully compatible (default for buquet local development)
 
-LocalStack provides a fully functional local AWS cloud stack, including S3 with complete conditional write and versioning support. It's the default for qo's Docker Compose development environment.
+LocalStack provides a fully functional local AWS cloud stack, including S3 with complete conditional write and versioning support. It's the default for buquet's Docker Compose development environment.
 
 **Configuration**:
 ```bash
 export S3_ENDPOINT=http://localhost:4566
 export S3_REGION=us-east-1
-export S3_BUCKET=qo-dev
+export S3_BUCKET=buquet-dev
 export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
 ```
@@ -370,9 +370,9 @@ Garage is a lightweight, Rust-based S3-compatible storage system designed for ge
 ```bash
 export S3_ENDPOINT=http://localhost:3902
 export S3_REGION=garage
-export S3_BUCKET=qo
-export AWS_ACCESS_KEY_ID=qo
-export AWS_SECRET_ACCESS_KEY=qosecretkey
+export S3_BUCKET=buquet
+export AWS_ACCESS_KEY_ID=buquet
+export AWS_SECRET_ACCESS_KEY=buquetsecretkey
 ```
 
 **Notes**:
@@ -398,7 +398,7 @@ R2 offers S3-compatible storage with no egress fees, making it cost-effective fo
 ```bash
 export S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
 export S3_REGION=auto
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 ```
@@ -426,7 +426,7 @@ Wasabi offers S3-compatible storage at competitive prices with no egress fees.
 ```bash
 export S3_ENDPOINT=https://s3.wasabisys.com
 export S3_REGION=us-east-1
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 ```
@@ -449,7 +449,7 @@ Spaces provides simple S3-compatible storage integrated with DigitalOcean infras
 ```bash
 export S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
 export S3_REGION=nyc3
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 ```
@@ -472,7 +472,7 @@ GCS has its own API but offers S3 interoperability mode. However, some condition
 ```bash
 export S3_ENDPOINT=https://storage.googleapis.com
 export S3_REGION=auto
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=<HMAC-key>
 export AWS_SECRET_ACCESS_KEY=<HMAC-secret>
 ```
@@ -501,7 +501,7 @@ Ceph's RadosGW provides enterprise-grade S3-compatible storage for on-premises d
 ```bash
 export S3_ENDPOINT=http://radosgw:7480
 export S3_REGION=default
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 ```
@@ -518,14 +518,14 @@ export AWS_SECRET_ACCESS_KEY=...
 
 **Status**: Not recommended
 
-B2's S3-compatible API has limitations that make it unsuitable for qo.
+B2's S3-compatible API has limitations that make it unsuitable for buquet.
 
 **Issues**:
 - **Eventual consistency** on some operations
 - **Incomplete conditional write support**
 - Higher latency for metadata operations
 
-**Recommendation**: Do not use B2 for qo. Consider Wasabi or R2 for similar pricing.
+**Recommendation**: Do not use B2 for buquet. Consider Wasabi or R2 for similar pricing.
 
 ---
 
@@ -539,7 +539,7 @@ LocalStack emulates AWS services locally, including S3.
 ```bash
 export S3_ENDPOINT=http://localhost:4566
 export S3_REGION=us-east-1
-export S3_BUCKET=qo
+export S3_BUCKET=buquet
 export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
 ```
@@ -559,7 +559,7 @@ This is expected behavior when:
 - Another worker claimed the task first
 - A concurrent update changed the ETag
 
-qo handles these gracefully. If you see excessive 412 errors, consider:
+buquet handles these gracefully. If you see excessive 412 errors, consider:
 - Increasing shard count to reduce contention
 - Checking for worker configuration mismatches
 
@@ -581,13 +581,13 @@ Some providers have slight delays in LIST consistency even with strong read cons
 
 If task history is unavailable:
 1. Check if your provider supports versioning
-2. Enable versioning on the bucket: `aws s3api put-bucket-versioning --bucket qo --versioning-configuration Status=Enabled`
-3. Verify with: `aws s3api get-bucket-versioning --bucket qo`
+2. Enable versioning on the bucket: `aws s3api put-bucket-versioning --bucket buquet --versioning-configuration Status=Enabled`
+3. Verify with: `aws s3api get-bucket-versioning --bucket buquet`
 
 ---
 
 ## See Also
 
-- [S3 Feature References](../S3-REFERENCES.md) - Technical details on S3 features qo uses
+- [S3 Feature References](../S3-REFERENCES.md) - Technical details on S3 features buquet uses
 - [Getting Started](../getting-started.md) - Quick start guide
-- [Architecture](../PLAN.md) - How qo uses S3 internally
+- [Architecture](../PLAN.md) - How buquet uses S3 internally

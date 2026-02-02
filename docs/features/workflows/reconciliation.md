@@ -8,7 +8,7 @@ that are stuck in `running` or `waiting_signal` status but have no active
 orchestrator task.
 
 > **Note:** This is the detailed spec for the sweeper described in `index.md`.
-> The CLI command is `qo workflow sweeper`.
+> The CLI command is `buquet workflow sweeper`.
 
 ## Philosophy Alignment
 
@@ -30,7 +30,7 @@ The sweeper periodically:
 4. If task is missing/completed/failed, reports the workflow as needing recovery
 
 Recovery (submitting a new orchestrator task + CAS update) is performed by the
-caller, since the sweeper does not depend on the qo queue directly.
+caller, since the sweeper does not depend on the buquet queue directly.
 
 ## Detection Logic
 
@@ -72,18 +72,18 @@ async def recover_workflow(wf_id):
 
 ## CLI
 
-**Not yet implemented.** Use the `WorkflowSweeper` library from qow
+**Not yet implemented.** Use the `WorkflowSweeper` library from buquet-workflow
 in Rust or Python and trigger recovery in your own process.
 
 ```bash
 # Run sweeper continuously
-qo workflow sweeper --interval 300  # Check every 5 minutes
+buquet workflow sweeper --interval 300  # Check every 5 minutes
 
 # One-shot sweep
-qo workflow sweeper --once
+buquet workflow sweeper --once
 
 # With custom stale threshold
-qo workflow sweeper --stale-after 600  # Consider stale after 10 min
+buquet workflow sweeper --stale-after 600  # Consider stale after 10 min
 ```
 
 ## Configuration

@@ -1,4 +1,4 @@
-# Full stack - LocalStack + qo services (for CI/demos)
+# Full stack - LocalStack + buquet services (for CI/demos)
 #
 # Usage:
 #   docker compose -f compose.full.yml up -d
@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     environment:
       - S3_ENDPOINT=http://localstack:4566
-      - S3_BUCKET=qo-dev
+      - S3_BUCKET=buquet-dev
       - S3_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
@@ -44,7 +44,7 @@ services:
         condition: service_healthy
     environment:
       - S3_ENDPOINT=http://localstack:4566
-      - S3_BUCKET=qo-dev
+      - S3_BUCKET=buquet-dev
       - S3_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
@@ -61,7 +61,7 @@ services:
       - "8080:8080"
     environment:
       - S3_ENDPOINT=http://localstack:4566
-      - S3_BUCKET=qo-dev
+      - S3_BUCKET=buquet-dev
       - S3_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test

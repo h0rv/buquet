@@ -15,8 +15,8 @@ Scheduled tasks can be missed permanently for that interval. This violates expec
 - Next tick sees `last_run_at` set and `is_due` returns false, so the 09:00 run is skipped.
 
 ## Location
-- `crates/qo/src/main.rs:670-713`
-- `crates/qo/src/queue/schedule.rs:116-129`
+- `crates/buquet/src/main.rs:670-713`
+- `crates/buquet/src/queue/schedule.rs:116-129`
 
 ## Proposed Fix
 Use a two-step flow that only advances `last_run` after a successful submit:

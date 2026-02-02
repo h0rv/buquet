@@ -30,7 +30,7 @@ for task in tasks:
 ## With Options
 
 ```python
-from qo import RetryPolicy
+from buquet import RetryPolicy
 
 tasks = await queue.submit_many(
     [
@@ -87,10 +87,10 @@ impl PyQueue {
 
 ```bash
 # Submit from JSON file
-qo submit-many tasks.json
+buquet submit-many tasks.json
 
 # Submit from stdin (one JSON per line)
-cat tasks.jsonl | qo submit-many -
+cat tasks.jsonl | buquet submit-many -
 ```
 
 ## Performance
@@ -101,9 +101,9 @@ cat tasks.jsonl | qo submit-many -
 
 ## Files to Change
 
-- `crates/qo/src/python/queue.rs` - Add `submit_many` method
-- `crates/qo/python/qo/_qo.pyi` - Add type stub
-- `crates/qo/src/cli/commands.rs` - Add `SubmitMany` command (optional)
+- `crates/buquet/src/python/queue.rs` - Add `submit_many` method
+- `crates/buquet/python/buquet/_buquet.pyi` - Add type stub
+- `crates/buquet/src/cli/commands.rs` - Add `SubmitMany` command (optional)
 
 ## Dependencies
 

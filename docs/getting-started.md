@@ -1,6 +1,6 @@
-# Getting Started with qo
+# Getting Started with buquet
 
-qo is a distributed task queue built entirely on S3-compatible object storage. No databases. No message brokers. No coordination services. Just workers polling object storage and claiming tasks atomically.
+buquet is a distributed task queue built entirely on S3-compatible object storage. No databases. No message brokers. No coordination services. Just workers polling object storage and claiming tasks atomically.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ Before you begin, ensure you have the following installed:
 
 ## Quick Start with Docker
 
-Start the complete qo stack with a single command:
+Start the complete buquet stack with a single command:
 
 ```bash
 docker compose up -d
@@ -27,10 +27,10 @@ The dashboard provides visibility into task states, worker status, and queue met
 
 ## Python SDK Installation
 
-Install the qo Python SDK using uv:
+Install the buquet Python SDK using uv:
 
 ```bash
-uv add qo
+uv add buquet
 ```
 
 ## Submitting Tasks
@@ -39,10 +39,10 @@ Submit tasks to the queue using the Python SDK:
 
 ```python
 import asyncio
-from qo import connect
+from buquet import connect
 
 async def main():
-    queue = await connect(bucket="qo-dev", endpoint="http://localhost:4566")
+    queue = await connect(bucket="buquet-dev", endpoint="http://localhost:4566")
     task = await queue.submit("send_email", {"to": "user@example.com"})
     print(f"Task {task.id} submitted")
 
@@ -57,10 +57,10 @@ Create a worker that processes tasks:
 
 ```python
 import asyncio
-from qo import connect, Worker, RetryableError
+from buquet import connect, Worker, RetryableError
 
 async def main():
-    queue = await connect(bucket="qo-dev", endpoint="http://localhost:4566")
+    queue = await connect(bucket="buquet-dev", endpoint="http://localhost:4566")
     worker = Worker(queue)
 
     @worker.task("send_email")
@@ -77,12 +77,12 @@ Workers poll for available tasks, claim them atomically using S3 conditional wri
 
 ## Configuration
 
-Configure qo using environment variables:
+Configure buquet using environment variables:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `S3_ENDPOINT` | S3-compatible endpoint URL | `http://localhost:4566` |
-| `S3_BUCKET` | Bucket name for task storage | `qo-dev` |
+| `S3_BUCKET` | Bucket name for task storage | `buquet-dev` |
 | `S3_REGION` | AWS region | `us-east-1` |
 | `AWS_ACCESS_KEY_ID` | Access key for S3 authentication | `test` |
 | `AWS_SECRET_ACCESS_KEY` | Secret key for S3 authentication | `test` |
@@ -95,27 +95,27 @@ Generate shell completions for tab-completion support:
 
 ```bash
 # Bash
-qo completions bash > ~/.local/share/bash-completion/completions/qo
+buquet completions bash > ~/.local/share/bash-completion/completions/buquet
 
 # Zsh (add to fpath)
-qo completions zsh > ~/.zfunc/_qo
+buquet completions zsh > ~/.zfunc/_buquet
 
 # Fish
-qo completions fish > ~/.config/fish/completions/qo.fish
+buquet completions fish > ~/.config/fish/completions/buquet.fish
 ```
 
 After installing, restart your shell or source the completion file.
 
 ## Error Handling
 
-qo distinguishes between two types of errors:
+buquet distinguishes between two types of errors:
 
 ### RetryableError
 
 Use for temporary failures that should be retried (network timeouts, rate limits, temporary service unavailability):
 
 ```python
-from qo import RetryableError
+from buquet import RetryableError
 
 @worker.task("fetch_data")
 async def fetch_data(input):
@@ -133,7 +133,7 @@ Tasks that fail with `RetryableError` are automatically retried with exponential
 Use for failures that should not be retried (invalid input, business logic errors, unrecoverable states):
 
 ```python
-from qo import PermanentError
+from buquet import PermanentError
 
 @worker.task("process_order")
 async def process_order(input):
@@ -146,10 +146,10 @@ Tasks that fail with `PermanentError` are immediately moved to failed status wit
 
 ## Adaptive Polling (Cost Optimization)
 
-qo uses adaptive polling by default to minimize S3 costs. When tasks are available, polling is fast. When the queue is idle, polling backs off automatically.
+buquet uses adaptive polling by default to minimize S3 costs. When tasks are available, polling is fast. When the queue is idle, polling backs off automatically.
 
 ```python
-from qo import Worker, WorkerRunOptions, PollingStrategy
+from buquet import Worker, WorkerRunOptions, PollingStrategy
 
 options = WorkerRunOptions(
     polling=PollingStrategy.adaptive(
@@ -163,7 +163,7 @@ await worker.run(options)
 
 ```rust
 // Rust example
-use qo::worker::{RunnerConfig, PollingStrategy};
+use buquet::worker::{RunnerConfig, PollingStrategy};
 
 let config = RunnerConfig {
     polling: PollingStrategy::adaptive(100, 5000),
@@ -171,7 +171,7 @@ let config = RunnerConfig {
 };
 ```
 
-Or via config file (`qo.toml`):
+Or via config file (`buquet.toml`):
 
 ```toml
 [worker.polling]
@@ -211,7 +211,7 @@ shard_prefix_len = 2  # 1=16 shards, 2=256 shards, 3=4096 shards
 For large deployments, shard leasing assigns shards dynamically to workers so each worker only polls its owned shards. This eliminates redundant LIST operations across workers.
 
 ```python
-from qo import WorkerRunOptions, ShardLeaseConfig
+from buquet import WorkerRunOptions, ShardLeaseConfig
 
 options = WorkerRunOptions(shard_leasing=ShardLeaseConfig.enabled())
 await worker.run(options)
@@ -230,17 +230,17 @@ See [Shard Leasing](features/shard-leases.md) for lease algorithm details and fa
 
 ## Version History and Retention
 
-qo uses S3 bucket versioning to maintain a complete audit trail of every task state transition. This enables powerful debugging with `qo history <task_id>` and compliance capabilities, but requires lifecycle policy configuration to manage storage costs at scale.
+buquet uses S3 bucket versioning to maintain a complete audit trail of every task state transition. This enables powerful debugging with `buquet history <task_id>` and compliance capabilities, but requires lifecycle policy configuration to manage storage costs at scale.
 
 **Important:** Without lifecycle policies, version history grows indefinitely. For production deployments, configure S3 lifecycle rules to expire old versions:
 
 ```bash
 # Apply a 30-day retention policy
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket your-qo-bucket \
+  --bucket your-buquet-bucket \
   --lifecycle-configuration '{
     "Rules": [{
-      "ID": "qo-version-retention",
+      "ID": "buquet-version-retention",
       "Status": "Enabled",
       "Filter": {"Prefix": "tasks/"},
       "NoncurrentVersionExpiration": {"NoncurrentDays": 30}
@@ -252,7 +252,7 @@ For detailed guidance on cost implications and retention strategies, see [Versio
 
 ## Supported Storage Backends
 
-qo works with any S3-compatible storage that supports strong consistency and conditional writes. Tested providers include:
+buquet works with any S3-compatible storage that supports strong consistency and conditional writes. Tested providers include:
 
 | Provider | Status | Notes |
 |----------|--------|-------|
@@ -270,4 +270,4 @@ For detailed compatibility information, provider-specific configuration, and a c
 
 - View task status and metrics in the dashboard at http://localhost:8080
 - Scale by adding more workers (they coordinate via S3)
-- Inspect task data directly with `aws s3 ls s3://qo/tasks/`
+- Inspect task data directly with `aws s3 ls s3://buquet/tasks/`

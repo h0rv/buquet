@@ -15,10 +15,10 @@ Both the Rust and Python workers were claiming ALL tasks found in the ready inde
 
 ```python
 import asyncio
-from qo import connect, Worker, WorkerRunOptions, PollingStrategy
+from buquet import connect, Worker, WorkerRunOptions, PollingStrategy
 
 async def demo():
-    queue = await connect(endpoint='http://localhost:4566', bucket='qo-dev')
+    queue = await connect(endpoint='http://localhost:4566', bucket='buquet-dev')
 
     # Submit a task of type "task_a"
     await queue.submit("task_a", {"data": 1})
@@ -58,11 +58,11 @@ The worker should only claim tasks for which it has registered handlers. The pol
 
 ## Root Cause
 
-Both the Rust worker (`crates/qo/src/worker/runner.rs`) and Python worker (`crates/qo/src/python/worker.rs`) had the same bug: they claimed tasks before checking if a handler was registered for the task type.
+Both the Rust worker (`crates/buquet/src/worker/runner.rs`) and Python worker (`crates/buquet/src/python/worker.rs`) had the same bug: they claimed tasks before checking if a handler was registered for the task type.
 
 ## Fix Applied
 
-The fix centralizes the "check handler before claiming" logic in a new Rust function `try_claim_for_handler` in `crates/qo/src/worker/claim.rs`. This function is the **single source of truth** for this pattern, used by both Rust and Python workers.
+The fix centralizes the "check handler before claiming" logic in a new Rust function `try_claim_for_handler` in `crates/buquet/src/worker/claim.rs`. This function is the **single source of truth** for this pattern, used by both Rust and Python workers.
 
 ### Core Function: `try_claim_for_handler`
 
@@ -106,7 +106,7 @@ where
 ### Rust Worker Usage
 
 ```rust
-// In crates/qo/src/worker/runner.rs
+// In crates/buquet/src/worker/runner.rs
 async fn try_claim(&mut self, task_id: Uuid) -> Result<Option<(Task, String, Uuid)>, StorageError> {
     let handlers = &self.handlers;
     match try_claim_for_handler(&self.queue, task_id, &self.info.worker_id, |task_type| {
@@ -121,7 +121,7 @@ async fn try_claim(&mut self, task_id: Uuid) -> Result<Option<(Task, String, Uui
 ### Python Worker Usage
 
 ```rust
-// In crates/qo/src/python/worker.rs
+// In crates/buquet/src/python/worker.rs
 // Snapshot registered handler types once per poll cycle
 let registered_types: HashSet<String> = {
     let handlers_guard = handlers.read().await;
@@ -138,14 +138,14 @@ match try_claim_for_handler(&queue, task_id, &worker_id, |task_type| {
 
 ## Files Modified
 
-- `crates/qo/src/worker/claim.rs` - Added `try_claim_for_handler` function (source of truth)
-- `crates/qo/src/worker/mod.rs` - Exported `try_claim_for_handler`
-- `crates/qo/src/worker/runner.rs` - Rust worker now uses `try_claim_for_handler`
-- `crates/qo/src/python/worker.rs` - Python worker now uses `try_claim_for_handler`
+- `crates/buquet/src/worker/claim.rs` - Added `try_claim_for_handler` function (source of truth)
+- `crates/buquet/src/worker/mod.rs` - Exported `try_claim_for_handler`
+- `crates/buquet/src/worker/runner.rs` - Rust worker now uses `try_claim_for_handler`
+- `crates/buquet/src/python/worker.rs` - Python worker now uses `try_claim_for_handler`
 
 ## Tests Added
 
-- `crates/qo/python/tests/test_reschedule.py::TestWorkerHandlerFiltering` - Dedicated test class with 3 tests:
+- `crates/buquet/python/tests/test_reschedule.py::TestWorkerHandlerFiltering` - Dedicated test class with 3 tests:
   - `test_worker_does_not_claim_unhandled_task_types` - Verifies unhandled tasks remain pending
   - `test_worker_claims_only_handled_task_types` - Verifies selective claiming works
   - `test_multiple_workers_with_different_handlers` - Verifies multi-worker scenarios

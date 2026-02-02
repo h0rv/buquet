@@ -117,10 +117,10 @@ if run.status == "paused" and run.error.type == "VersionMismatch":
 ### CLI
 ```bash
 # Start with optional version label
-qo workflow start order_fulfillment '{"order_id":"123"}' --version 2026-01-28
+buquet workflow start order_fulfillment '{"order_id":"123"}' --version 2026-01-28
 
 # Resume with force (acknowledge version change)
-qo workflow resume wf-123 --force-version
+buquet workflow resume wf-123 --force-version
 ```
 
 ## Behavior

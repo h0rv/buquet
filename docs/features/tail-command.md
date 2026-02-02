@@ -1,4 +1,4 @@
-# `qo tail` - Live Task Stream
+# `buquet tail` - Live Task Stream
 
 > **Status:** COMPLETED (2026-01-26)
 > **Effort:** ~100 lines of Rust
@@ -17,25 +17,25 @@ Debugging and monitoring without opening the dashboard. Essential for:
 
 ```bash
 # Stream all task events
-qo tail
+buquet tail
 
 # Filter by task type
-qo tail --task-type=send_email
+buquet tail --task-type=send_email
 
 # Filter by status changes
-qo tail --status=failed
+buquet tail --status=failed
 
 # JSON output for piping
-qo tail --json | jq '.task_id'
+buquet tail --json | jq '.task_id'
 
 # Limit output
-qo tail --limit=100
+buquet tail --limit=100
 ```
 
 ## Example Output
 
 ```
-$ qo tail --task-type=process_order
+$ buquet tail --task-type=process_order
 [12:34:56.123] a1b2c3d4 pending → running  (worker: order-worker-1)
 [12:34:56.891] a1b2c3d4 running → completed (duration: 768ms)
 [12:34:57.002] e5f6g7h8 pending → running  (worker: order-worker-2)
@@ -126,8 +126,8 @@ pub struct TailArgs {
 
 ## Files to Change
 
-- `crates/qo/src/cli/commands.rs` - Add `Tail` variant
-- `crates/qo/src/main.rs` - Add handler
+- `crates/buquet/src/cli/commands.rs` - Add `Tail` variant
+- `crates/buquet/src/main.rs` - Add handler
 - `Cargo.toml` - May need `eventsource-client` or similar
 
 ## Dependencies

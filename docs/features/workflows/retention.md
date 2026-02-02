@@ -29,7 +29,7 @@ storage cost and list latency.
 
 ### CLI
 ```bash
-qo workflow prune --older-than 30d
+buquet workflow prune --older-than 30d
 ```
 
 ### Config

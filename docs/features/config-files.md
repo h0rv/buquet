@@ -4,7 +4,7 @@
 > **Effort:** ~150 lines of Rust
 > **Tier:** 3 (Polish)
 
-Load settings from `.qo.toml` or `~/.config/qo/config.toml`.
+Load settings from `.buquet.toml` or `~/.config/buquet/config.toml`.
 
 ## Why
 
@@ -15,19 +15,19 @@ Load settings from `.qo.toml` or `~/.config/qo/config.toml`.
 ## Config File Format
 
 ```toml
-# .qo.toml (project-level) or ~/.config/qo/config.toml (user-level)
+# .buquet.toml (project-level) or ~/.config/buquet/config.toml (user-level)
 
 [default]
-bucket = "qo-prod"
+bucket = "buquet-prod"
 region = "us-east-1"
 
 [profiles.dev]
-bucket = "qo-dev"
+bucket = "buquet-dev"
 endpoint = "http://localhost:3900"
 region = "us-east-1"
 
 [profiles.staging]
-bucket = "qo-staging"
+bucket = "buquet-staging"
 region = "us-west-2"
 
 [worker]
@@ -44,13 +44,13 @@ sweep_interval_secs = 300
 
 ```bash
 # Use default profile
-qo list
+buquet list
 
 # Use specific profile
-qo --profile=dev list
+buquet --profile=dev list
 
 # Override with env vars (always takes precedence)
-S3_BUCKET=qo-test qo list
+S3_BUCKET=buquet-test buquet list
 ```
 
 ## Config Resolution Order
@@ -58,8 +58,8 @@ S3_BUCKET=qo-test qo list
 1. CLI flags (highest priority)
 2. Environment variables
 3. Profile-specific settings (if `--profile` specified)
-4. Project-level `.qo.toml`
-5. User-level `~/.config/qo/config.toml`
+4. Project-level `.buquet.toml`
+5. User-level `~/.config/buquet/config.toml`
 6. Built-in defaults (lowest priority)
 
 ## Implementation
@@ -95,12 +95,12 @@ fn load_config(profile: Option<&str>) -> Result<QoConfig> {
 
         // 2. Load user-level config
         .add_source(
-            File::with_name(&format!("{}/.config/qo/config", home))
+            File::with_name(&format!("{}/.config/buquet/config", home))
                 .required(false)
         )
 
         // 3. Load project-level config
-        .add_source(File::with_name(".qo").required(false))
+        .add_source(File::with_name(".buquet").required(false))
 
         // 4. Load profile-specific settings
         .set_override_option(
@@ -115,7 +115,7 @@ fn load_config(profile: Option<&str>) -> Result<QoConfig> {
                 .try_parsing(true)
         )
         .add_source(
-            Environment::with_prefix("QO")
+            Environment::with_prefix("BUQUET")
                 .separator("_")
                 .try_parsing(true)
         );
@@ -144,25 +144,25 @@ struct Cli {
 
 ## Validation
 
-Add `qo config` subcommand:
+Add `buquet config` subcommand:
 
 ```bash
 # Show resolved configuration
-qo config show
+buquet config show
 
 # Validate configuration
-qo config validate
+buquet config validate
 
 # Show config file locations
-qo config paths
+buquet config paths
 ```
 
 ## Files to Change
 
 - `Cargo.toml` - Add `config` crate
-- `crates/qo/src/config.rs` - New module for config loading
-- `crates/qo/src/cli/commands.rs` - Add global `--profile` and `--config` flags
-- `crates/qo/src/main.rs` - Use config for S3 client initialization
+- `crates/buquet/src/config.rs` - New module for config loading
+- `crates/buquet/src/cli/commands.rs` - Add global `--profile` and `--config` flags
+- `crates/buquet/src/main.rs` - Use config for S3 client initialization
 
 ## Dependencies
 

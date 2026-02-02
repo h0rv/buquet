@@ -3,7 +3,7 @@
 Status: Documented
 
 ## Summary
-qo relies on specific S3 behaviors (strong consistency, conditional writes).
+buquet relies on specific S3 behaviors (strong consistency, conditional writes).
 Not all "S3-compatible" providers implement these features fully or with
 comparable performance.
 

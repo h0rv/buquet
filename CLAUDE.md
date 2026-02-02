@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-qo is a distributed task queue built on S3-compatible object storage. No databases, no brokers - just a bucket. Two crates:
+buquet is a distributed task queue built on S3-compatible object storage. No databases, no brokers - just a bucket. Two crates:
 
-- **qo** (`crates/qo/`) - Core task queue with Rust library + Python bindings
-- **qow** (`crates/qow/`) - Workflow orchestration layer built on qo
+- **buquet** (`crates/buquet/`) - Core task queue with Rust library + Python bindings
+- **buquet-workflow** (`crates/buquet-workflow/`) - Workflow orchestration layer built on buquet (to be merged)
 
 ## Commands
 
@@ -32,10 +32,10 @@ just down         # Stop LocalStack
 just py-dev       # Build and install Python wheel locally
 
 # Run a single Rust test
-cargo test -p qo test_name
+cargo test -p buquet test_name
 
 # Run a single Python test
-cd crates/qo && uv run pytest python/tests/test_file.py::test_name -v
+cd crates/buquet && uv run pytest python/tests/test_file.py::test_name -v
 ```
 
 ## Architecture
@@ -60,13 +60,13 @@ workers/{worker_id}.json           # Worker registration
 
 ### Key Modules
 
-**qo crate:**
+**buquet crate:**
 - `queue/ops.rs` - Core queue operations (submit, claim, complete, fail)
 - `worker/` - Worker loop, lease management, timeout monitor
 - `storage/` - S3 abstraction layer
 - `python/` - PyO3 bindings
 
-**qow crate:**
+**buquet-workflow crate:**
 - `engine.rs` - Workflow execution engine
 - `dag.rs` - Step dependency graph
 - `state.rs` - Workflow state with CAS updates
@@ -87,7 +87,7 @@ Strict linting enforced:
 
 ## Configuration
 
-Environment variables or `.qo.toml`:
+Environment variables or `.buquet.toml`:
 
 ```bash
 # Required

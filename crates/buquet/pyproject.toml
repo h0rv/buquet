@@ -1,0 +1,217 @@
+[project]
+name = "buquet"
+version = "0.1.0"
+description = "A task queue built on object storage. S3 is the control plane."
+readme = "python/README.md"
+requires-python = ">=3.11,<3.14"
+license = "MIT"
+authors = [{ name = "Robby Horvath" }]
+keywords = ["task-queue", "s3", "async", "worker", "job", "object-storage"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Distributed Computing",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/h0rv/buquet"
+Repository = "https://github.com/h0rv/buquet"
+Documentation = "https://github.com/h0rv/buquet/tree/main/docs"
+
+[project.optional-dependencies]
+dev = [
+    "maturin>=1.11.5",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist>=3.5",
+    "ruff>=0.9",
+    "pyright>=1.1",
+    "boto3>=1.35",
+    "types-boto3>=1.0.0",
+    "types-botocore>=1.0.2",
+]
+
+[build-system]
+requires = ["maturin>=1.11,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+features = ["python"]
+python-source = "python"
+module-name = "buquet._buquet"
+
+[dependency-groups]
+dev = [
+    "maturin>=1.11.5",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-xdist>=3.5",
+    "boto3>=1.35",
+    "ruff>=0.9",
+    "pyright>=1.1",
+    "types-boto3>=1.0.0",
+    "types-botocore>=1.0.2",
+]
+
+# ============================================================================
+# Ruff - Python linter and formatter
+# ============================================================================
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["python", "examples"]
+
+[tool.ruff.lint]
+select = [
+    "F",      # Pyflakes
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "YTT",    # flake8-2020
+    "ANN",    # flake8-annotations
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit (security)
+    "BLE",    # flake8-blind-except
+    "FBT",    # flake8-boolean-trap
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "COM",    # flake8-commas
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "EM",     # flake8-errmsg
+    "FA",     # flake8-future-annotations
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "LOG",    # flake8-logging
+    "G",      # flake8-logging-format
+    "INP",    # flake8-no-pep420
+    "PIE",    # flake8-pie
+    "T20",    # flake8-print
+    "PYI",    # flake8-pyi
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SLF",    # flake8-self
+    "SLOT",   # flake8-slots
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "INT",    # flake8-gettext
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "TD",     # flake8-todos
+    "FIX",    # flake8-fixme
+    "ERA",    # eradicate
+    "PL",     # Pylint
+    "TRY",    # tryceratops
+    "FLY",    # flynt
+    "PERF",   # Perflint
+    "FURB",   # refurb
+    "RUF",    # Ruff-specific rules
+]
+ignore = [
+    "COM812",  # Missing trailing comma (conflicts with formatter)
+    "ISC001",  # Single line implicit string concat (conflicts with formatter)
+    "TD002",   # Missing author in TODO
+    "TD003",   # Missing issue link in TODO
+    "FIX002",  # Line contains TODO
+]
+
+[tool.ruff.lint.per-file-ignores]
+"python/buquet/__init__.py" = [
+    "F401",    # Unused imports (re-exports)
+]
+"python/tests/**/*.py" = [
+    "S101",    # Use of `assert` detected (expected in tests)
+    "PLR2004", # Magic value used in comparison (common in tests)
+]
+"tests/**/*.py" = [
+    "S101",    # Use of `assert` detected (expected in tests)
+    "PLR2004", # Magic value used in comparison (common in tests)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["buquet"]
+required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+mypy-init-return = true
+suppress-none-returning = true
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+# ============================================================================
+# Pyright - Python type checker (strict mode)
+# ============================================================================
+[tool.pyright]
+pythonVersion = "3.11"
+pythonPlatform = "All"
+typeCheckingMode = "strict"
+venvPath = "../.."
+venv = ".venv"
+
+include = ["python", "python/tests", "tests", "examples"]
+exclude = ["**/__pycache__"]
+
+# Strict mode settings (all enabled by typeCheckingMode = "strict")
+reportMissingImports = true
+reportMissingTypeStubs = true
+reportUnusedImport = true
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUnusedVariable = true
+reportDuplicateImport = true
+reportPrivateUsage = true
+reportConstantRedefinition = true
+reportIncompatibleMethodOverride = true
+reportIncompatibleVariableOverride = true
+reportInconsistentConstructor = true
+reportOverlappingOverload = true
+reportUninitializedInstanceVariable = true
+reportCallInDefaultInitializer = true
+reportUnnecessaryIsInstance = true
+reportUnnecessaryCast = true
+reportUnnecessaryComparison = true
+reportUnnecessaryContains = true
+reportAssertAlwaysTrue = true
+reportSelfClsParameterName = true
+reportUnusedExpression = true
+reportMatchNotExhaustive = true
+
+reportUnknownMemberType = true
+reportUnknownArgumentType = true
+reportUnknownVariableType = true
+reportUnknownParameterType = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["python/tests", "tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+markers = [
+    "integration: tests that require real S3 connection or CLI binary",
+]

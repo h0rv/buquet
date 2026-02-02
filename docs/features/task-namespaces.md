@@ -50,7 +50,7 @@ queue = await connect(bucket="my-bucket", prefix="tenant-a")
 
 ### CLI
 ```bash
-qo --prefix tenant-a submit -t send_email -i '{}'
+buquet --prefix tenant-a submit -t send_email -i '{}'
 ```
 
 ## Behavior

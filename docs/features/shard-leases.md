@@ -221,5 +221,5 @@ Safe to enable without data migration:
 ## Verdict
 
 Shard Leasing captures most of the scalability win of Direct Dispatch while
-preserving qo’s core invariants and avoiding a new control plane. It is a strong
+preserving buquet’s core invariants and avoiding a new control plane. It is a strong
 candidate for the “simple but scalable” path.

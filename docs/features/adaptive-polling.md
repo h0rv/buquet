@@ -52,7 +52,7 @@ When a task IS found:
 ### Rust
 
 ```rust
-use qo::worker::{RunnerConfig, PollingStrategy};
+use buquet::worker::{RunnerConfig, PollingStrategy};
 
 let config = RunnerConfig {
     polling: PollingStrategy::Adaptive {
@@ -75,7 +75,7 @@ let config = RunnerConfig {
 ### Python
 
 ```python
-from qo import Worker, WorkerRunOptions, PollingStrategy
+from buquet import Worker, WorkerRunOptions, PollingStrategy
 
 # Adaptive (recommended)
 options = WorkerRunOptions(
@@ -94,7 +94,7 @@ options = WorkerRunOptions(
 await worker.run(options)
 ```
 
-### Config File (qo.toml)
+### Config File (buquet.toml)
 
 ```toml
 [worker.polling]
@@ -186,15 +186,15 @@ PollingStrategy::Adaptive {
 ### Files to Modify
 
 ```
-crates/qo/src/worker/
+crates/buquet/src/worker/
 ├── config.rs      # Add PollingStrategy enum
 ├── runner.rs      # Implement adaptive loop
 └── mod.rs         # Re-export
 
-crates/qo/src/python/
+crates/buquet/src/python/
 └── worker.rs      # Python bindings for PollingStrategy
 
-crates/qo/src/config.rs      # Config file parsing for polling settings
+crates/buquet/src/config.rs      # Config file parsing for polling settings
 ```
 
 ### New Types
@@ -295,7 +295,7 @@ Add to getting-started.md:
 ```markdown
 ## Polling Strategy
 
-qo uses adaptive polling by default to minimize S3 costs:
+buquet uses adaptive polling by default to minimize S3 costs:
 
 - When tasks are available: polls every 100ms
 - When queue is idle: backs off up to 5s between polls

@@ -15,8 +15,8 @@ Schedule inspection and automation that relies on `last_task_id` is incorrect. O
 - `last_task_id` never reflects the real task id.
 
 ## Location
-- `crates/qo/src/main.rs:701-706`
-- `crates/qo/src/queue/schedule.rs:236-249`
+- `crates/buquet/src/main.rs:701-706`
+- `crates/buquet/src/queue/schedule.rs:236-249`
 
 ## Proposed Fix
 Update the record with `If-Match` using the ETag from the initial claim, or re-read the record and update with the new ETag. Alternative: generate a task id before submit and include it in the initial `last_run` update.

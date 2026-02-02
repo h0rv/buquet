@@ -14,7 +14,7 @@ systems rather than predicting them with token buckets.
 
 ## Philosophy Alignment
 
-This approach aligns with qo's core principles:
+This approach aligns with buquet's core principles:
 
 | Principle | How This Aligns |
 |-----------|-----------------|
@@ -44,7 +44,7 @@ Add `RescheduleError` exception that:
 ### Python
 
 ```python
-from qo import connect, Worker, RescheduleError
+from buquet import connect, Worker, RescheduleError
 
 @worker.task("call_api")
 async def call_api(input):
@@ -85,7 +85,7 @@ task = await queue.submit(
 ### Rust
 
 ```rust
-use qo::{Queue, TaskError, RescheduleError};
+use buquet::{Queue, TaskError, RescheduleError};
 
 // In handler
 async fn call_api(input: Value) -> Result<Value, TaskError> {
@@ -111,10 +111,10 @@ queue.submit("call_api", input)
 
 ```bash
 # Submit with max reschedules
-qo submit -t call_api -i '{"url": "..."}' --max-reschedules 100
+buquet submit -t call_api -i '{"url": "..."}' --max-reschedules 100
 
 # Check task reschedule count
-qo get <task_id>
+buquet get <task_id>
 # Shows: reschedule_count: 5, max_reschedules: 100
 ```
 
@@ -339,15 +339,15 @@ not Running), monitor will handle normally.
 
 Existing metrics work. Optional additions:
 
-- `qo_tasks_rescheduled_total{task_type}` - Total reschedule count
-- `qo_reschedule_delay_seconds{task_type}` - Histogram of delays
+- `buquet_tasks_rescheduled_total{task_type}` - Total reschedule count
+- `buquet_reschedule_delay_seconds{task_type}` - Histogram of delays
 
 ## Version History
 
 Reschedules appear in task version history:
 
 ```bash
-$ qo history <task_id>
+$ buquet history <task_id>
 
 Version 1: pending (created)
 Version 2: running (claimed by worker-1)
@@ -399,5 +399,5 @@ downstream system.
 
 **Q: What about global rate limits across all workers?**
 
-A: Use an external rate limiter (Redis, etc.) in your handler. qo stays
+A: Use an external rate limiter (Redis, etc.) in your handler. buquet stays
 simple; coordination happens at application layer.

@@ -697,6 +697,72 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510"
 
 [[package]]
+name = "buquet"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "aws-config",
+ "aws-sdk-s3",
+ "axum",
+ "chrono",
+ "clap",
+ "clap_complete",
+ "config",
+ "cron",
+ "dirs",
+ "futures",
+ "jsonschema",
+ "maud",
+ "metrics",
+ "metrics-exporter-prometheus",
+ "metrics-exporter-statsd",
+ "metrics-opentelemetry",
+ "opentelemetry",
+ "opentelemetry-otlp",
+ "opentelemetry_sdk",
+ "pyo3",
+ "pyo3-async-runtimes",
+ "pythonize",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "toml 0.8.23",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
+name = "buquet-workflow"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "aws-config",
+ "aws-sdk-s3",
+ "buquet",
+ "chrono",
+ "clap",
+ "futures",
+ "pyo3",
+ "pyo3-async-runtimes",
+ "pythonize",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+]
+
+[[package]]
 name = "bytecount"
 version = "0.6.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2675,72 +2741,6 @@ checksum = "a3a8f29db331e28c332c63496cfcbb822aca3d7320bc08b655d7fd0c29c50ede"
 dependencies = [
  "pyo3",
  "serde",
-]
-
-[[package]]
-name = "qo"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "aws-config",
- "aws-sdk-s3",
- "axum",
- "chrono",
- "clap",
- "clap_complete",
- "config",
- "cron",
- "dirs",
- "futures",
- "jsonschema",
- "maud",
- "metrics",
- "metrics-exporter-prometheus",
- "metrics-exporter-statsd",
- "metrics-opentelemetry",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry_sdk",
- "pyo3",
- "pyo3-async-runtimes",
- "pythonize",
- "rand 0.8.5",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "toml 0.8.23",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "qow"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "aws-config",
- "aws-sdk-s3",
- "chrono",
- "clap",
- "futures",
- "pyo3",
- "pyo3-async-runtimes",
- "pythonize",
- "qo",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
 ]
 
 [[package]]

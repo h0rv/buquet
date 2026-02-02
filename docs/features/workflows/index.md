@@ -1,23 +1,23 @@
-# Feature: qow (Durable Orchestration Layer)
+# Feature: buquet-workflow (Durable Orchestration Layer)
 
 ## Status: Implemented (Separate Package)
 
-**This is not part of core qo.** It is a **durable orchestration layer** built on qo's
-existing primitives. Core qo remains a simple task queue.
+**This is not part of core buquet.** It is a **durable orchestration layer** built on buquet's
+existing primitives. Core buquet remains a simple task queue.
 
-Implementation lives in `crates/qow` (Rust + Python bindings).
+Implementation lives in `crates/buquet-workflow` (Rust + Python bindings).
 
 ## Overview
 
-qow provides workflow orchestration without introducing a control plane,
+buquet-workflow provides workflow orchestration without introducing a control plane,
 external databases, or coordination services. It uses S3 as the only state store,
-just like core qo.
+just like core buquet.
 
 ## Comparison with Other Systems
 
-Before diving in, let's be clear about what qow provides vs. alternatives:
+Before diving in, let's be clear about what buquet-workflow provides vs. alternatives:
 
-| Aspect | Temporal | Hatchet | Prefect | qow |
+| Aspect | Temporal | Hatchet | Prefect | buquet-workflow |
 |--------|----------|---------|---------|--------------|
 | **Execution Guarantee** | At-least-once (activities) | At-least-once | Exactly-once (cache-based) | At-least-once |
 | **Exactly-Once Effects** | Requires idempotent activities | Requires idempotent steps | Via cache keys | Requires idempotent handlers |
@@ -30,7 +30,7 @@ Before diving in, let's be clear about what qow provides vs. alternatives:
 
 ### What We Trade Away
 
-**Sub-second latency**: qo is polling-based. Steps take 1-5 seconds to dispatch.
+**Sub-second latency**: buquet is polling-based. Steps take 1-5 seconds to dispatch.
 Not suitable for real-time or interactive workflows.
 
 **Deterministic replay**: No event sourcing. If a step fails mid-way, you get
@@ -73,7 +73,7 @@ workflow/{id}/steps/{name}.json # Step results (immutable after completion)
 workflow/{id}/signals/{name}/   # Signal inbox (list for waiting signals)
 ```
 
-Each workflow step is a normal qo task. The orchestrator is a special task handler
+Each workflow step is a normal buquet task. The orchestrator is a special task handler
 that reads workflow state, determines the next step, and submits child tasks.
 
 ### Workflow State Object
@@ -112,7 +112,7 @@ that reads workflow state, determines the next step, and submits child tasks.
 
 ### Step Execution as Tasks
 
-Each step runs as an qo task with type `workflow.step:{workflow_type}:{step_name}`:
+Each step runs as an buquet task with type `workflow.step:{workflow_type}:{step_name}`:
 
 ```
 tasks/a/abc123.json  →  type: "workflow.step:order_fulfillment:charge_card"
@@ -295,7 +295,7 @@ for workflow in list_workflows_by_status(ACTIVE_STATES):
     elif orchestrator_task.status == "running":
         # Check if lease expired (task timed out)
         if orchestrator_task.lease_expires_at < now:
-            # Will be recovered by qo's timeout monitor
+            # Will be recovered by buquet's timeout monitor
             pass
         else:
             # Orchestrator is alive, workflow is healthy
@@ -323,8 +323,8 @@ async def recover_workflow(wf_id):
 ### Sweeper Configuration
 
 ```python
-# Run as part of qo monitor or standalone
-qo workflow sweeper --interval 300  # Check every 5 minutes
+# Run as part of buquet monitor or standalone
+buquet workflow sweeper --interval 300  # Check every 5 minutes
 ```
 
 The sweeper is idempotent - running multiple instances is safe.
@@ -419,13 +419,13 @@ async def wait_for_signal(wf_id, name, timeout):
 
 ### At-Least-Once Delivery
 
-Signals are **at-least-once**, consistent with qo's task execution model:
+Signals are **at-least-once**, consistent with buquet's task execution model:
 
 - The same signal may be sent multiple times (sender retries, network issues)
 - Signal handlers **must be idempotent**
-- qo does not deduplicate signals at the infrastructure level
+- buquet does not deduplicate signals at the infrastructure level
 
-This is intentional: qo doesn't solve idempotency for tasks, and doesn't solve
+This is intentional: buquet doesn't solve idempotency for tasks, and doesn't solve
 it for signals either. Handlers own idempotency.
 
 ```python
@@ -453,7 +453,7 @@ Only signals from **terminal workflows** are eligible for deletion.
 Define step dependencies declaratively:
 
 ```python
-from qow import Workflow, step
+from buquet-workflow import Workflow, step
 
 wf = Workflow("order_fulfillment")
 
@@ -484,7 +484,7 @@ validate_order
 
 ### Timers and Delays
 
-Use qo's `available_at` for durable timers:
+Use buquet's `available_at` for durable timers:
 
 ```python
 @wf.step("send_reminder", delay=timedelta(hours=24))
@@ -497,7 +497,7 @@ Under the hood, this submits a task with `schedule_at` set to 24 hours in the fu
 
 ### Retries and Timeouts
 
-Steps use qo's existing retry policies:
+Steps use buquet's existing retry policies:
 
 ```python
 @wf.step("charge_card", retries=3, timeout=30)
@@ -533,14 +533,14 @@ async def send(ctx):
     return {"sent": True}
 ```
 
-**qo cannot guarantee exactly-once effects.** It provides:
+**buquet cannot guarantee exactly-once effects.** It provides:
 1. Idempotency keys to prevent duplicate task submission
 2. The same idempotency key pattern for your external calls
 
 But if your downstream doesn't support idempotency, effects may happen multiple
 times on retry. This is inherent to at-least-once systems.
 
-qo's built-in idempotency keys prevent duplicate step submissions:
+buquet's built-in idempotency keys prevent duplicate step submissions:
 
 ```python
 await queue.submit(
@@ -554,7 +554,7 @@ await queue.submit(
 
 ### Cancellation
 
-Workflows and steps support cancellation (using qo's cancellation features):
+Workflows and steps support cancellation (using buquet's cancellation features):
 
 ```python
 # Cancel a workflow
@@ -656,7 +656,7 @@ async def unreserve(ctx, step_result):
 
 ## Guarantees
 
-### What qow Guarantees
+### What buquet-workflow Guarantees
 
 - **Durable workflow state**: State is persisted in S3 with CAS protection
 - **At-least-once step execution**: Every step will run at least once
@@ -666,11 +666,11 @@ async def unreserve(ctx, step_result):
 - **Auditable history**: All state changes visible via S3 versioning
 - **Stall recovery**: Sweeper detects and recovers stuck workflows
 
-### What qow Does NOT Guarantee
+### What buquet-workflow Does NOT Guarantee
 
 - **Exactly-once step execution**: Steps may run multiple times. Use idempotency.
 - **Exactly-once side effects**: Only achievable if downstream systems support
-  idempotency AND your handler uses it correctly. qo provides idempotency keys
+  idempotency AND your handler uses it correctly. buquet provides idempotency keys
   to help, but cannot guarantee external systems behave correctly.
 - **Sub-second latency**: Expect 1-5 second step dispatch times
 - **Strong ordering across workflows**: Different workflows have no ordering
@@ -680,7 +680,7 @@ async def unreserve(ctx, step_result):
 
 ### Idempotency: Your Responsibility
 
-qow provides tools for idempotency, but **you must use them correctly**:
+buquet-workflow provides tools for idempotency, but **you must use them correctly**:
 
 ```python
 # GOOD: Using idempotency key for external API
@@ -699,14 +699,14 @@ async def charge(ctx):
 
 If the downstream system doesn't support idempotency, you cannot achieve
 exactly-once effects. This is a fundamental distributed systems constraint,
-not an qo limitation.
+not an buquet limitation.
 
 ## API
 
 ### Python
 
 ```python
-from qow import Workflow, step, WorkflowClient
+from buquet-workflow import Workflow, step, WorkflowClient
 
 # Define workflow
 wf = Workflow("order_fulfillment")
@@ -743,22 +743,22 @@ await client.signal(run.id, "approval", {"approved": True})
 
 ```bash
 # Start a workflow
-qo workflow start order_fulfillment '{"order_id": "ORD-123"}'
+buquet workflow start order_fulfillment '{"order_id": "ORD-123"}'
 
 # Check status
-qo workflow status wf-abc123
+buquet workflow status wf-abc123
 
 # List workflows
-qo workflow list --type order_fulfillment --status running
+buquet workflow list --type order_fulfillment --status running
 
 # Cancel
-qo workflow cancel wf-abc123 --reason "No longer needed"
+buquet workflow cancel wf-abc123 --reason "No longer needed"
 
 # Send signal
-qo workflow signal wf-abc123 approval '{"approved": true}'
+buquet workflow signal wf-abc123 approval '{"approved": true}'
 
 # View step results
-qo workflow steps wf-abc123
+buquet workflow steps wf-abc123
 ```
 
 ## Implementation
@@ -766,15 +766,15 @@ qo workflow steps wf-abc123
 ### Package Structure
 
 ```
-qow/
-└── crates/qow/
+buquet-workflow/
+└── crates/buquet-workflow/
     ├── src/
     │   ├── lib.rs           # Rust core
     │   ├── workflow.rs      # Workflow state management
     │   ├── orchestrator.rs  # Step scheduling logic
     │   └── signals.rs       # Signal handling
     └── python/
-        └── qow/
+        └── buquet-workflow/
             ├── __init__.py
             ├── workflow.py
             └── client.py
@@ -809,7 +809,7 @@ workflow/
 | Documentation | 1-2 days |
 | **Total** | **2-3 weeks** |
 
-## When to Use qow
+## When to Use buquet-workflow
 
 **Good fit:**
 - Multi-step processes that need durable coordination
@@ -826,7 +826,7 @@ workflow/
 
 ## Comparison: When to Use What
 
-| Use Case | qow | Hatchet | Temporal |
+| Use Case | buquet-workflow | Hatchet | Temporal |
 |----------|--------------|---------|----------|
 | Simple multi-step jobs | ✓ Best fit | Good | Overkill |
 | Data pipelines | ✓ Good | Good | Overkill |
@@ -839,7 +839,7 @@ workflow/
 
 ## Summary
 
-qow provides durable workflow orchestration for teams that want:
+buquet-workflow provides durable workflow orchestration for teams that want:
 - **Simplicity**: Just S3, no databases or message brokers
 - **Transparency**: All state is inspectable JSON
 - **Reliability**: Crash-safe with at-least-once execution

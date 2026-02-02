@@ -4,50 +4,180 @@ requires-python = ">=3.11, <3.14"
 
 [manifest]
 members = [
-    "qo",
-    "qo-workspace",
-    "qow",
+    "buquet",
+    "buquet-workflow",
+    "buquet-workspace",
 ]
 
 [[package]]
 name = "boto3"
-version = "1.42.38"
+version = "1.42.39"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e8/38/1e5eb348e41d97ca2b6164df28501409c2fe9bd34455c256dd87644b7c0e/boto3-1.42.38.tar.gz", hash = "sha256:af2e5c08972d35fa4b4bc457031794343a6ddb1df5692db43302d5b5feaac23e", size = 112852, upload-time = "2026-01-29T20:39:37.786Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b8/ea/b96c77da49fed28744ee0347374d8223994a2b8570e76e8380a4064a8c4a/boto3-1.42.39.tar.gz", hash = "sha256:d03f82363314759eff7f84a27b9e6428125f89d8119e4588e8c2c1d79892c956", size = 112783, upload-time = "2026-01-30T20:38:31.226Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/98/22e5f4f5ced6cf1aface4b438307a157e9cb7a4bcbd19f4b9dec89b0fe33/boto3-1.42.38-py3-none-any.whl", hash = "sha256:b5a748b3fdddba8aa2988af0e462996ef72dc2760b0eab30329b9d201d4b38f2", size = 140606, upload-time = "2026-01-29T20:39:36.641Z" },
+    { url = "https://files.pythonhosted.org/packages/b2/c4/3493b5c86e32d6dd558b30d16b55503e24a6e6cd7115714bc102b247d26e/boto3-1.42.39-py3-none-any.whl", hash = "sha256:d9d6ce11df309707b490d2f5f785b761cfddfd6d1f665385b78c9d8ed097184b", size = 140606, upload-time = "2026-01-30T20:38:28.635Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.42.38"
+version = "1.42.39"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/b7/a02a9db7f5267547da79a28e0832059f87b7e8f275423b4384891d53bf3b/botocore-1.42.38.tar.gz", hash = "sha256:eb36d09b5c61b3ede6129f7b54630049f3eeeccf1327a32cf8944563027a4002", size = 14918119, upload-time = "2026-01-29T20:39:28.055Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/a6/3a34d1b74effc0f759f5ff4e91c77729d932bc34dd3207905e9ecbba1103/botocore-1.42.39.tar.gz", hash = "sha256:0f00355050821e91a5fe6d932f7bf220f337249b752899e3e4cf6ed54326249e", size = 14914927, upload-time = "2026-01-30T20:38:19.265Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/c1/5db0d5f9a57d5e72dd3b18c7279b0005adaf5ffe5915803ae6216fe86cec/botocore-1.42.38-py3-none-any.whl", hash = "sha256:b67e0c4989a6bdd459cb49274df05003179165567b7789d8d920cdbdc6c2661f", size = 14590772, upload-time = "2026-01-29T20:39:25.165Z" },
+    { url = "https://files.pythonhosted.org/packages/ef/71/9a2c88abb5fe47b46168b262254d5b5d635de371eba4bd01ea5c8c109575/botocore-1.42.39-py3-none-any.whl", hash = "sha256:9e0d0fed9226449cc26fcf2bbffc0392ac698dd8378e8395ce54f3ec13f81d58", size = 14591958, upload-time = "2026-01-30T20:38:14.814Z" },
 ]
 
 [[package]]
 name = "botocore-stubs"
-version = "1.42.38"
+version = "1.42.39"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "types-awscrt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c9/6c/64aee1d9be301d4421c7f9a4a1c0a923b95b1b3f8a46ff0d6a6c8c72ede5/botocore_stubs-1.42.38.tar.gz", hash = "sha256:96cf63b6949264f078f5009fa72932c6fd06a88c7bde4e21ed96df6c37e8edac", size = 42394, upload-time = "2026-01-29T21:34:37.618Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/51/18/dfacc2b7fdbace7d85526e7ec3acabb79253495f58baa47c736e60f6f4a1/botocore_stubs-1.42.39.tar.gz", hash = "sha256:7a75265cd59fb93fea4a6a02ac5e90cbb44d14f182627ad58db1425690bc883d", size = 42413, upload-time = "2026-01-30T21:34:24.293Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/99/c45816044000b3958990af230202224eca0b6cdac034a7660d0a7af8e413/botocore_stubs-1.42.38-py3-none-any.whl", hash = "sha256:e21dadac08ee134cc0713884545c01b8eb1552c77e0d0c55c05e9584590e2b28", size = 66761, upload-time = "2026-01-29T21:34:36.351Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/2e/cbcc97042679bdabc654a6e536e65581e4294a56e0b8bf87f455d95d77a9/botocore_stubs-1.42.39-py3-none-any.whl", hash = "sha256:5540aa52b5071f84e4edba4bdaffb7a24d02bd1272df534eb38289c0d9a3e22a", size = 66761, upload-time = "2026-01-30T21:34:22.366Z" },
 ]
+
+[[package]]
+name = "buquet"
+version = "0.1.0"
+source = { editable = "crates/buquet" }
+
+[package.optional-dependencies]
+dev = [
+    { name = "boto3" },
+    { name = "maturin" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "types-boto3" },
+    { name = "types-botocore" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "boto3" },
+    { name = "maturin" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "types-boto3" },
+    { name = "types-botocore" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "boto3", marker = "extra == 'dev'", specifier = ">=1.35" },
+    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11.5" },
+    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
+    { name = "types-boto3", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "types-botocore", marker = "extra == 'dev'", specifier = ">=1.0.2" },
+]
+provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "boto3", specifier = ">=1.35" },
+    { name = "maturin", specifier = ">=1.11.5" },
+    { name = "pyright", specifier = ">=1.1" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.24" },
+    { name = "pytest-xdist", specifier = ">=3.5" },
+    { name = "ruff", specifier = ">=0.9" },
+    { name = "types-boto3", specifier = ">=1.0.0" },
+    { name = "types-botocore", specifier = ">=1.0.2" },
+]
+
+[[package]]
+name = "buquet-workflow"
+version = "0.1.0"
+source = { editable = "crates/buquet-workflow" }
+dependencies = [
+    { name = "buquet" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "maturin" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "maturin" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "buquet", editable = "crates/buquet" },
+    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11.5" },
+    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
+]
+provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "maturin", specifier = ">=1.11.5" },
+    { name = "pyright", specifier = ">=1.1" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "ruff", specifier = ">=0.9" },
+]
+
+[[package]]
+name = "buquet-workspace"
+version = "0.1.0"
+source = { editable = "." }
+
+[package.optional-dependencies]
+dev = [
+    { name = "maturin" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11,<2.0" },
+    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "colorama"
@@ -210,136 +340,6 @@ wheels = [
 ]
 
 [[package]]
-name = "qo"
-version = "0.1.0"
-source = { editable = "crates/qo" }
-
-[package.optional-dependencies]
-dev = [
-    { name = "boto3" },
-    { name = "maturin" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "types-boto3" },
-    { name = "types-botocore" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "boto3" },
-    { name = "maturin" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "types-boto3" },
-    { name = "types-botocore" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "boto3", marker = "extra == 'dev'", specifier = ">=1.35" },
-    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11.5" },
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
-    { name = "types-boto3", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "types-botocore", marker = "extra == 'dev'", specifier = ">=1.0.2" },
-]
-provides-extras = ["dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "boto3", specifier = ">=1.35" },
-    { name = "maturin", specifier = ">=1.11.5" },
-    { name = "pyright", specifier = ">=1.1" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-asyncio", specifier = ">=0.24" },
-    { name = "pytest-xdist", specifier = ">=3.5" },
-    { name = "ruff", specifier = ">=0.9" },
-    { name = "types-boto3", specifier = ">=1.0.0" },
-    { name = "types-botocore", specifier = ">=1.0.2" },
-]
-
-[[package]]
-name = "qo-workspace"
-version = "0.1.0"
-source = { editable = "." }
-
-[package.optional-dependencies]
-dev = [
-    { name = "maturin" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11,<2.0" },
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.5" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
-]
-provides-extras = ["dev"]
-
-[[package]]
-name = "qow"
-version = "0.1.0"
-source = { editable = "crates/qow" }
-dependencies = [
-    { name = "qo" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "maturin" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "maturin" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "maturin", marker = "extra == 'dev'", specifier = ">=1.11.5" },
-    { name = "pyright", marker = "extra == 'dev'", specifier = ">=1.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
-    { name = "qo", editable = "crates/qo" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9" },
-]
-provides-extras = ["dev"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "maturin", specifier = ">=1.11.5" },
-    { name = "pyright", specifier = ">=1.1" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-asyncio", specifier = ">=0.23" },
-    { name = "ruff", specifier = ">=0.9" },
-]
-
-[[package]]
 name = "ruff"
 version = "0.14.14"
 source = { registry = "https://pypi.org/simple" }
@@ -397,16 +397,16 @@ wheels = [
 
 [[package]]
 name = "types-boto3"
-version = "1.42.38"
+version = "1.42.39"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore-stubs" },
     { name = "types-s3transfer" },
     { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/be/7c/89619324f6f381e8eb6907ccef4d6c516a4fd3a820a6f371110ae343aee8/types_boto3-1.42.38.tar.gz", hash = "sha256:154a47bbf8b91d0cad184c54a8919ca1a7e2e6a086081b44d8a8879e79939fc4", size = 101292, upload-time = "2026-01-29T20:49:18.328Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/51/df528df84d8096df3a427bf3eccd5b857163a47b5494b8c3484822afe88f/types_boto3-1.42.39.tar.gz", hash = "sha256:94fd5637c80458e953914f2aad30d97207833d2b0bb01b4c0759dc4549b6b3bc", size = 101272, upload-time = "2026-01-30T20:49:27.512Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/c1/4420f8be180e671b9bdd6725c3105dcbd8d9331f7024eac07aff4433df6c/types_boto3-1.42.38-py3-none-any.whl", hash = "sha256:6cbf0264a3f2560124aa7bd110d9a48d1f0442314c1b9d0cd2a85a66265ff55f", size = 69676, upload-time = "2026-01-29T20:49:10.97Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/ed/bb4862eb7cd5189eb6bf8cc838c5a67d5d6f858dd6726607d7e6a4d2156d/types_boto3-1.42.39-py3-none-any.whl", hash = "sha256:fb59851a3f0ddbae381f0a4dfc30a83bb06276ce9f9039eb3fd3234e58a67913", size = 69675, upload-time = "2026-01-30T20:49:22.907Z" },
 ]
 
 [[package]]

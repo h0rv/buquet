@@ -16,7 +16,7 @@ Not a workflow engine - just simple primitives that compose.
 | Simple, boring, reliable | Patterns, not frameworks; users control flow |
 | No coordination services | Polling-based completion checks |
 | Crash-safe | Parent/child IDs persisted in tasks |
-| Debuggable | `qo get` shows relationships, easy to trace |
+| Debuggable | `buquet get` shows relationships, easy to trace |
 
 ## Problem
 
@@ -115,7 +115,7 @@ async def batch_process(input, context):
 #### Wait for Tasks
 
 ```python
-from qo import wait_for_all, wait_for_any, TaskStatus
+from buquet import wait_for_all, wait_for_any, TaskStatus
 
 # Wait for all to complete (polling)
 results = await wait_for_all(queue, child_ids, timeout=300)
@@ -210,13 +210,13 @@ let results = queue.wait_for_all(&child_ids, WaitOptions {
 
 ```bash
 # View task relationships
-qo get abc123 --json | jq '{parent: .parent_task_id, children: .child_task_ids}'
+buquet get abc123 --json | jq '{parent: .parent_task_id, children: .child_task_ids}'
 
 # List children of a task
-qo list --parent abc123
+buquet list --parent abc123
 
 # Trace task lineage
-qo trace abc123
+buquet trace abc123
 # Output:
 #   batch_process (abc123) [completed]
 #   ├── process_item (def456) [completed]
@@ -370,7 +370,7 @@ async def wait_for_all(
 ## Task Graph Visualization
 
 ```bash
-$ qo trace batch-123 --format tree
+$ buquet trace batch-123 --format tree
 
 batch_process (batch-123) [completed, 2m 30s]
 ├── process_item (item-001) [completed, 45s]
@@ -383,7 +383,7 @@ batch_process (batch-123) [completed, 2m 30s]
 ```
 
 ```bash
-$ qo trace batch-123 --format json
+$ buquet trace batch-123 --format json
 {
   "id": "batch-123",
   "task_type": "batch_process",
@@ -429,26 +429,26 @@ Not prevented. User's responsibility. Could add cycle detection if needed.
 
 ### Deep Nesting
 
-No limit on parent→child→grandchild depth. `qo trace` handles recursion.
+No limit on parent→child→grandchild depth. `buquet trace` handles recursion.
 
 ## Metrics
 
 ```
-qo_child_tasks_spawned_total{parent_type, child_type}
-qo_wait_duration_seconds{task_type}
-qo_wait_timeouts_total{task_type}
+buquet_child_tasks_spawned_total{parent_type, child_type}
+buquet_wait_duration_seconds{task_type}
+buquet_wait_timeouts_total{task_type}
 ```
 
 ## Implementation
 
 ### Files to Change
 
-- `crates/qo/src/models/task.rs` - Add `parent_task_id`, `child_task_ids`, `on_complete`
-- `crates/qo/src/queue/ops.rs` - Track parent/child in submit
-- `crates/qo/src/queue/wait.rs` (new) - `wait_for_all`, `wait_for_any`
-- `crates/qo/src/worker/context.rs` - Add `spawn()`, `spawn_and_wait()`
-- `crates/qo/src/python/queue.rs` - Python bindings
-- `crates/qo/src/cli/trace.rs` (new) - Task graph visualization
+- `crates/buquet/src/models/task.rs` - Add `parent_task_id`, `child_task_ids`, `on_complete`
+- `crates/buquet/src/queue/ops.rs` - Track parent/child in submit
+- `crates/buquet/src/queue/wait.rs` (new) - `wait_for_all`, `wait_for_any`
+- `crates/buquet/src/worker/context.rs` - Add `spawn()`, `spawn_and_wait()`
+- `crates/buquet/src/python/queue.rs` - Python bindings
+- `crates/buquet/src/cli/trace.rs` (new) - Task graph visualization
 
 ### Estimated Effort
 

@@ -1,7 +1,7 @@
-# qow Specification
+# buquet-workflow Specification
 
-This directory contains the specifications for qow, a durable
-orchestration layer built on qo.
+This directory contains the specifications for buquet-workflow, a durable
+orchestration layer built on buquet.
 
 ## Documents
 

@@ -73,7 +73,7 @@ ready/0/255/2026-01-27T12:00:00Z/mno  # priority 0   (255-0=255)
 ### Python
 
 ```python
-from qo import connect, Priority
+from buquet import connect, Priority
 
 queue = await connect(bucket="my-queue")
 
@@ -114,7 +114,7 @@ class Priority:
 ### Rust
 
 ```rust
-use qo::{Queue, Priority};
+use buquet::{Queue, Priority};
 
 let queue = Queue::connect("my-queue").await?;
 
@@ -146,18 +146,18 @@ let task = queue
 
 ```bash
 # High priority
-qo submit -t send_alert -i '{"message":"Server down!"}' --priority 255
-qo submit -t send_alert -i '{"message":"Server down!"}' --priority critical
+buquet submit -t send_alert -i '{"message":"Server down!"}' --priority 255
+buquet submit -t send_alert -i '{"message":"Server down!"}' --priority critical
 
 # Normal priority (default)
-qo submit -t send_email -i '{"to":"user@example.com"}'
+buquet submit -t send_email -i '{"to":"user@example.com"}'
 
 # Low priority
-qo submit -t cleanup -i '{}' --priority 50
-qo submit -t cleanup -i '{}' --priority low
+buquet submit -t cleanup -i '{}' --priority 50
+buquet submit -t cleanup -i '{}' --priority low
 
 # Check task priority
-qo get abc123 --json | jq .priority
+buquet get abc123 --json | jq .priority
 ```
 
 Named priority flags:
@@ -208,7 +208,7 @@ A task created at priority 50 with age_rate=1 would reach priority 128 after
 ### Configuration
 
 ```toml
-# .qo.toml
+# .buquet.toml
 [worker]
 priority_aging = true
 priority_age_rate = 1  # priority points per minute

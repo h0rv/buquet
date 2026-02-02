@@ -1,4 +1,4 @@
-# Filter `qo list` by Task Type
+# Filter `buquet list` by Task Type
 
 > **Status:** COMPLETED (2026-01-26)
 > **Effort:** ~15 lines of Rust
@@ -14,13 +14,13 @@ In production, you often have multiple task types. Finding all failed `send_emai
 
 ```bash
 # All failed email tasks
-qo list --task-type=send_email --status=failed
+buquet list --task-type=send_email --status=failed
 
 # All running order tasks in shard 'a'
-qo list -s a --task-type=process_order --status=running
+buquet list -s a --task-type=process_order --status=running
 
 # Short form
-qo list -t send_email
+buquet list -t send_email
 ```
 
 ## Implementation
@@ -51,8 +51,8 @@ let tasks = match &args.task_type {
 
 ## Files to Change
 
-- `crates/qo/src/cli/commands.rs` - Add `task_type` field to `List` variant
-- `crates/qo/src/main.rs` - Add filter logic in `Commands::List` handler
+- `crates/buquet/src/cli/commands.rs` - Add `task_type` field to `List` variant
+- `crates/buquet/src/main.rs` - Add filter logic in `Commands::List` handler
 
 ## Dependencies
 

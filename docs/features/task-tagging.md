@@ -15,7 +15,7 @@ Tags are indexed for efficient querying without scanning all tasks.
 | Simple, boring, reliable | Just a map field, standard pattern |
 | No coordination services | No external tag service |
 | Crash-safe | Tags persisted with task |
-| Debuggable | `qo list --tag customer=acme` shows filtered tasks |
+| Debuggable | `buquet list --tag customer=acme` shows filtered tasks |
 
 ## Problem
 
@@ -34,7 +34,7 @@ efficient filtering.
 ### Python
 
 ```python
-from qo import connect
+from buquet import connect
 
 queue = await connect(bucket="my-queue")
 
@@ -73,7 +73,7 @@ await queue.remove_tags(task_id, ["priority"])
 ### Rust
 
 ```rust
-use qo::Queue;
+use buquet::Queue;
 use std::collections::HashMap;
 
 let queue = Queue::connect("my-queue").await?;
@@ -102,26 +102,26 @@ let tasks = queue
 
 ```bash
 # Submit with tags
-qo submit -t process_order -i '{"order_id":"12345"}' \
+buquet submit -t process_order -i '{"order_id":"12345"}' \
     --tag customer=acme-corp \
     --tag region=us-west \
     --tag priority=high
 
 # List with tag filter
-qo list --tag customer=acme-corp
-qo list --tag customer=acme-corp --tag region=us-west
+buquet list --tag customer=acme-corp
+buquet list --tag customer=acme-corp --tag region=us-west
 
 # List tasks that have a tag (any value)
-qo list --has-tag batch_id
+buquet list --has-tag batch_id
 
 # Show tags in output
-qo list --tag customer=acme-corp --format json | jq '.[].tags'
+buquet list --tag customer=acme-corp --format json | jq '.[].tags'
 
 # Update tags
-qo tag abc123 priority=critical
+buquet tag abc123 priority=critical
 
 # Remove tags
-qo untag abc123 priority
+buquet untag abc123 priority
 ```
 
 ## Task Object
@@ -153,7 +153,7 @@ qo untag abc123 priority
 | Allowed value chars | Any UTF-8, no newlines |
 
 Reserved tag prefixes:
-- `qo_` - Reserved for system use
+- `buquet_` - Reserved for system use
 - `_` - Reserved for internal use
 
 ## Storage Options
@@ -313,9 +313,9 @@ await queue.submit("process", data, tags={"experiment": "pricing-v2", "variant":
 ## Metrics
 
 ```
-qo_tasks_submitted_total{task_type, tags...}  # Optional: include common tags
-qo_tag_index_writes_total
-qo_tag_queries_total{tag_key}
+buquet_tasks_submitted_total{task_type, tags...}  # Optional: include common tags
+buquet_tag_index_writes_total
+buquet_tag_queries_total{tag_key}
 ```
 
 ## Version History
@@ -323,7 +323,7 @@ qo_tag_queries_total{tag_key}
 Tag changes appear in task history:
 
 ```bash
-$ qo history abc123
+$ buquet history abc123
 
 Version 1: pending (created, tags: {customer: acme-corp})
 Version 2: pending (tags updated: {customer: acme-corp, priority: critical})
@@ -335,11 +335,11 @@ Version 4: completed
 
 ### Files to Change
 
-- `crates/qo/src/models/task.rs` - Add `tags: HashMap<String, String>` field
-- `crates/qo/src/queue/ops.rs` - Add tag filtering to `list()`, add `update_tags()`, `remove_tags()`
-- `crates/qo/src/queue/submit.rs` - Accept tags in `SubmitOptions`
-- `crates/qo/src/python/queue.rs` - Python bindings
-- `crates/qo/src/cli/commands.rs` - Add `--tag` flags to submit/list, add `tag`/`untag` commands
+- `crates/buquet/src/models/task.rs` - Add `tags: HashMap<String, String>` field
+- `crates/buquet/src/queue/ops.rs` - Add tag filtering to `list()`, add `update_tags()`, `remove_tags()`
+- `crates/buquet/src/queue/submit.rs` - Accept tags in `SubmitOptions`
+- `crates/buquet/src/python/queue.rs` - Python bindings
+- `crates/buquet/src/cli/commands.rs` - Add `--tag` flags to submit/list, add `tag`/`untag` commands
 
 ### Estimated Effort
 

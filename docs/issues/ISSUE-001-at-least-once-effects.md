@@ -14,7 +14,7 @@ handlers are idempotent or use an outbox-style pattern.
 ## Why This Is Fundamental
 S3 provides atomic object updates, not atomic interaction with external systems.
 Exactly-once effects would require transactional guarantees across S3 and the
-side-effect system, which are outside qo's scope.
+side-effect system, which are outside buquet's scope.
 
 ## Mitigations
 - Document idempotency expectations in all APIs and examples.

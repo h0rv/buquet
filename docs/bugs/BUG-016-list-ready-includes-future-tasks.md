@@ -12,7 +12,7 @@ Admin tools and monitoring can misreport the active backlog and attempt to claim
 A task scheduled 2 hours in the future appears in `list_ready` immediately because its ready index key exists.
 
 ## Location
-- `crates/qo/src/queue/ops.rs:325-349`
+- `crates/buquet/src/queue/ops.rs:325-349`
 
 ## Proposed Fix
 Filter buckets by authoritative time (S3 time) so only buckets <= now are returned. Alternatively, add a parameter to include future buckets and update the docstring accordingly.

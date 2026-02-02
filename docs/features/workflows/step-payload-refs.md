@@ -43,11 +43,11 @@ Non-workflow clients (CLI, dashboards) automatically dereference payload refs:
 
 ```bash
 # Shows dereferenced output, not the ref
-qo status <task_id>
+buquet status <task_id>
 
 # Explicit ref handling
-qo status <task_id> --raw  # Shows {"$ref": "payloads/..."}
-qo payload get <task_id> output  # Fetches payload directly
+buquet status <task_id> --raw  # Shows {"$ref": "payloads/..."}
+buquet payload get <task_id> output  # Fetches payload directly
 ```
 
 ## API Sketch

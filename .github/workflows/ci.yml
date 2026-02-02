@@ -66,8 +66,8 @@ jobs:
           components: rustfmt
       - run: just fmt
 
-  pyright-qo:
-    name: Pyright (qo)
+  pyright-buquet:
+    name: Pyright (buquet)
     runs-on: ubuntu-latest
     env:
       UV_PYTHON: "3.11"
@@ -75,7 +75,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: taiki-e/install-action@just
       - uses: astral-sh/setup-uv@v3
-      - run: just qo-typecheck
+      - run: just buquet-typecheck
 
   pyright-workflows:
     name: Pyright (qow)
@@ -118,9 +118,9 @@ jobs:
           sleep 5
 
           # Create bucket and enable versioning
-          aws --endpoint-url=http://localhost:4566 s3 mb s3://qo-dev
+          aws --endpoint-url=http://localhost:4566 s3 mb s3://buquet-dev
           aws --endpoint-url=http://localhost:4566 s3api put-bucket-versioning \
-            --bucket qo-dev \
+            --bucket buquet-dev \
             --versioning-configuration Status=Enabled
         env:
           AWS_ACCESS_KEY_ID: test
@@ -130,20 +130,20 @@ jobs:
       - name: Run integration tests
         env:
           S3_ENDPOINT: http://localhost:4566
-          S3_BUCKET: qo-dev
+          S3_BUCKET: buquet-dev
           S3_REGION: us-east-1
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
-        run: cargo test -p qo --tests --features integration
+        run: cargo test -p buquet --tests --features integration
 
       - name: Run Python integration tests
         env:
           S3_ENDPOINT: http://localhost:4566
-          S3_BUCKET: qo-dev
+          S3_BUCKET: buquet-dev
           S3_REGION: us-east-1
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
         run: |
-          uv sync --project crates/qo --group dev --no-install-project
-          uv run --project crates/qo maturin develop
-          uv run --project crates/qo pytest crates/qo/python/tests -m integration
+          uv sync --project crates/buquet --group dev --no-install-project
+          uv run --project crates/buquet maturin develop
+          uv run --project crates/buquet pytest crates/buquet/python/tests -m integration

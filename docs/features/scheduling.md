@@ -27,7 +27,7 @@ Tasks with future `available_at` won't appear in the ready index until that time
 ### Recurring Schedules
 
 Store schedule definitions in S3. A lightweight scheduler task (runs as a
-regular qo worker) checks schedules and submits tasks when due.
+regular buquet worker) checks schedules and submits tasks when due.
 
 ## Storage Layout
 
@@ -70,7 +70,7 @@ schedules/
 
 ```python
 from datetime import datetime, timedelta
-from qo import connect
+from buquet import connect
 
 queue = await connect(bucket="my-queue")
 
@@ -110,7 +110,7 @@ await queue.delete_schedule("daily-report")
 ### Rust
 
 ```rust
-use qo::{Queue, Schedule};
+use buquet::{Queue, Schedule};
 use chrono::{Utc, Duration};
 
 let queue = Queue::connect("my-queue").await?;
@@ -137,30 +137,30 @@ let schedule = queue
 
 ```bash
 # One-shot scheduling
-qo submit -t send_reminder -i '{"user_id":"123"}' --at "2026-01-28T09:00:00Z"
-qo submit -t send_reminder -i '{"user_id":"123"}' --in 1h
+buquet submit -t send_reminder -i '{"user_id":"123"}' --at "2026-01-28T09:00:00Z"
+buquet submit -t send_reminder -i '{"user_id":"123"}' --in 1h
 
 # Create recurring schedule
-qo schedule create daily-report \
+buquet schedule create daily-report \
     --task-type generate_report \
     --input '{"report_type":"daily"}' \
     --cron "0 9 * * *"
 
 # List schedules
-qo schedule list
+buquet schedule list
 
 # Show schedule details
-qo schedule show daily-report
+buquet schedule show daily-report
 
 # Pause/resume
-qo schedule pause daily-report
-qo schedule resume daily-report
+buquet schedule pause daily-report
+buquet schedule resume daily-report
 
 # Trigger immediately (outside schedule)
-qo schedule trigger daily-report
+buquet schedule trigger daily-report
 
 # Delete
-qo schedule delete daily-report
+buquet schedule delete daily-report
 ```
 
 ## Scheduler Implementation
@@ -209,14 +209,14 @@ loop {
 ### Running the Scheduler
 
 ```bash
-# Run scheduler as part of qo monitor
-qo monitor --enable-scheduler
+# Run scheduler as part of buquet monitor
+buquet monitor --enable-scheduler
 
 # Or as standalone
-qo scheduler run
+buquet scheduler run
 ```
 
-The scheduler uses the same CAS primitives as the rest of qo — multiple
+The scheduler uses the same CAS primitives as the rest of buquet — multiple
 scheduler instances can run safely (only one will trigger each scheduled task).
 
 ## Cron Syntax
@@ -272,7 +272,7 @@ the next future run is scheduled.
 ### Phase 2: Recurring Schedules
 - Schedule definition storage
 - Scheduler worker implementation
-- CLI `qo schedule` commands
+- CLI `buquet schedule` commands
 
 ### Phase 3: Advanced Features
 - Execution history

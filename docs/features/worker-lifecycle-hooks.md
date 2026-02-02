@@ -17,7 +17,7 @@ Real workers need:
 ## API
 
 ```python
-from qo import connect, Worker
+from buquet import connect, Worker
 
 async def main():
     queue = await connect()
@@ -117,8 +117,8 @@ if let Some(ref on_success) = self.on_success {
 
 ## Files to Change
 
-- `crates/qo/src/python/worker.rs` - Add hook fields and decorators
-- `crates/qo/python/qo/_qo.pyi` - Add type stubs for hooks
+- `crates/buquet/src/python/worker.rs` - Add hook fields and decorators
+- `crates/buquet/python/buquet/_buquet.pyi` - Add type stubs for hooks
 
 ## Dependencies
 

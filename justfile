@@ -7,112 +7,112 @@ default:
 # Combined commands
 # ============================================================================
 
-fmt: qo-fmt workflows-fmt
-lint: qo-lint workflows-lint
-check: qo-check workflows-check
-test: qo-test workflows-test
-typecheck: qo-typecheck workflows-typecheck
+fmt: buquet-fmt workflows-fmt
+lint: buquet-lint workflows-lint
+check: buquet-check workflows-check
+test: buquet-test workflows-test
+typecheck: buquet-typecheck workflows-typecheck
 all: fmt lint check typecheck test
 integration: integration-rs integration-py
-load-test: qo-load-test
-chaos-test: qo-chaos-test
+load-test: buquet-load-test
+chaos-test: buquet-chaos-test
 
 integration-rs: up
-    if command -v awslocal >/dev/null 2>&1; then ./scripts/init-localstack.sh; else docker compose exec localstack awslocal s3 mb s3://qo-dev || true; docker compose exec localstack awslocal s3api put-bucket-versioning --bucket qo-dev --versioning-configuration Status=Enabled; fi
-    S3_ENDPOINT=http://localhost:4566 S3_BUCKET=qo-dev S3_REGION=us-east-1 \
+    if command -v awslocal >/dev/null 2>&1; then ./scripts/init-localstack.sh; else docker compose exec localstack awslocal s3 mb s3://buquet-dev || true; docker compose exec localstack awslocal s3api put-bucket-versioning --bucket buquet-dev --versioning-configuration Status=Enabled; fi
+    S3_ENDPOINT=http://localhost:4566 S3_BUCKET=buquet-dev S3_REGION=us-east-1 \
       AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test \
-      cargo test -p qo --tests --features integration
+      cargo test -p buquet --tests --features integration
 
 integration-py: up
-    if command -v awslocal >/dev/null 2>&1; then ./scripts/init-localstack.sh; else docker compose exec localstack awslocal s3 mb s3://qo-dev || true; docker compose exec localstack awslocal s3api put-bucket-versioning --bucket qo-dev --versioning-configuration Status=Enabled; fi
-    S3_ENDPOINT=http://localhost:4566 S3_BUCKET=qo-dev S3_REGION=us-east-1 \
+    if command -v awslocal >/dev/null 2>&1; then ./scripts/init-localstack.sh; else docker compose exec localstack awslocal s3 mb s3://buquet-dev || true; docker compose exec localstack awslocal s3api put-bucket-versioning --bucket buquet-dev --versioning-configuration Status=Enabled; fi
+    S3_ENDPOINT=http://localhost:4566 S3_BUCKET=buquet-dev S3_REGION=us-east-1 \
       AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test \
-      just -f crates/qo/justfile test-py-integration
+      just -f crates/buquet/justfile test-py-integration
 
 # ============================================================================
-# qo crate (Rust + Python)
+# buquet crate (Rust + Python)
 # ============================================================================
 
-qo-fmt:
-    just -f crates/qo/justfile fmt
+buquet-fmt:
+    just -f crates/buquet/justfile fmt
 
-qo-lint:
-    just -f crates/qo/justfile lint
+buquet-lint:
+    just -f crates/buquet/justfile lint
 
-qo-check:
-    just -f crates/qo/justfile check
+buquet-check:
+    just -f crates/buquet/justfile check
 
-qo-test:
-    just -f crates/qo/justfile test
+buquet-test:
+    just -f crates/buquet/justfile test
 
-qo-load-test:
-    just -f crates/qo/justfile load-test
+buquet-load-test:
+    just -f crates/buquet/justfile load-test
 
-qo-chaos-test:
-    just -f crates/qo/justfile chaos-test
+buquet-chaos-test:
+    just -f crates/buquet/justfile chaos-test
 
-qo-typecheck:
-    just -f crates/qo/justfile check-py
+buquet-typecheck:
+    just -f crates/buquet/justfile check-py
 
-qo-run *ARGS:
-    just -f crates/qo/justfile run -- {{ARGS}}
+buquet-run *ARGS:
+    just -f crates/buquet/justfile run -- {{ARGS}}
 
-qo-dev *ARGS:
-    just -f crates/qo/justfile dev -- {{ARGS}}
+buquet-dev *ARGS:
+    just -f crates/buquet/justfile dev -- {{ARGS}}
 
-qo-serve PORT="8080":
-    just -f crates/qo/justfile serve {{PORT}}
+buquet-serve PORT="8080":
+    just -f crates/buquet/justfile serve {{PORT}}
 
-# Python helpers for qo
+# Python helpers for buquet
 py-setup:
-    just -f crates/qo/justfile py-setup
+    just -f crates/buquet/justfile py-setup
 
 py-dev:
-    just -f crates/qo/justfile py-dev
+    just -f crates/buquet/justfile py-dev
 
 py-build:
-    just -f crates/qo/justfile py-build
+    just -f crates/buquet/justfile py-build
 
 py-verify:
-    just -f crates/qo/justfile py-verify
+    just -f crates/buquet/justfile py-verify
 
 # ============================================================================
-# qow crate
+# buquet-workflow crate
 # ============================================================================
 
 workflows-fmt:
-    just -f crates/qow/justfile fmt
+    just -f crates/buquet-workflow/justfile fmt
 
 workflows-lint:
-    just -f crates/qow/justfile lint
+    just -f crates/buquet-workflow/justfile lint
 
 workflows-check:
-    just -f crates/qow/justfile check
+    just -f crates/buquet-workflow/justfile check
 
 workflows-test:
-    just -f crates/qow/justfile test
+    just -f crates/buquet-workflow/justfile test
 
 workflows-typecheck:
-    just -f crates/qow/justfile pyright
+    just -f crates/buquet-workflow/justfile pyright
 
 # ============================================================================
 # Docker
 # ============================================================================
 
 docker-build:
-    docker build -t qo:latest .
+    docker build -t buquet:latest .
 
 docker-run-worker:
     docker run --rm -it \
         -e S3_ENDPOINT -e S3_BUCKET -e S3_REGION \
         -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
-        qo:latest worker
+        buquet:latest worker
 
 docker-run-serve:
     docker run --rm -it -p 8080:8080 \
         -e S3_ENDPOINT -e S3_BUCKET -e S3_REGION \
         -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
-        qo:latest serve --port 8080
+        buquet:latest serve --port 8080
 
 # ============================================================================
 # Docker Compose

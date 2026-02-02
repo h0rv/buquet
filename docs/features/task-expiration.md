@@ -16,7 +16,7 @@ counting as failures.
 | Simple, boring, reliable | One new field, simple timestamp comparison |
 | No coordination services | Workers check expiration on claim, no external TTL service |
 | Crash-safe | Expiration time persisted with task |
-| Debuggable | `qo status` shows expiration, clear why task wasn't processed |
+| Debuggable | `buquet status` shows expiration, clear why task wasn't processed |
 
 ## Problem
 
@@ -52,7 +52,7 @@ enum TaskStatus {
 ### Python
 
 ```python
-from qo import connect
+from buquet import connect
 from datetime import datetime, timedelta
 
 queue = await connect(bucket="my-queue")
@@ -93,7 +93,7 @@ if task.expires_at:
 ### Rust
 
 ```rust
-use qo::Queue;
+use buquet::Queue;
 use chrono::{Duration, Utc};
 
 let queue = Queue::connect("my-queue").await?;
@@ -119,19 +119,19 @@ let task = queue
 
 ```bash
 # Submit with absolute expiration
-qo submit -t send_reminder -i '{}' --expires-at "2026-01-28T17:00:00Z"
+buquet submit -t send_reminder -i '{}' --expires-at "2026-01-28T17:00:00Z"
 
 # Submit with TTL
-qo submit -t process_event -i '{}' --ttl 1h
-qo submit -t quick_task -i '{}' --ttl 5m
-qo submit -t batch_job -i '{}' --ttl 7d
+buquet submit -t process_event -i '{}' --ttl 1h
+buquet submit -t quick_task -i '{}' --ttl 5m
+buquet submit -t batch_job -i '{}' --ttl 7d
 
 # Check task expiration
-qo status abc123
+buquet status abc123
 # Output includes: expires_at: 2026-01-28T17:00:00Z (in 2h 30m)
 
 # List expired tasks
-qo list --status expired
+buquet list --status expired
 ```
 
 ## Task Object
@@ -321,9 +321,9 @@ task = await queue.submit(
 ## Metrics
 
 ```
-qo_tasks_expired_total{task_type}
-qo_task_ttl_seconds{task_type}  # Histogram of TTL values
-qo_tasks_near_expiration{task_type}  # Gauge of tasks expiring soon
+buquet_tasks_expired_total{task_type}
+buquet_task_ttl_seconds{task_type}  # Histogram of TTL values
+buquet_tasks_near_expiration{task_type}  # Gauge of tasks expiring soon
 ```
 
 ## Version History
@@ -331,7 +331,7 @@ qo_tasks_near_expiration{task_type}  # Gauge of tasks expiring soon
 Expiration appears in task history:
 
 ```bash
-$ qo history abc123
+$ buquet history abc123
 
 Version 1: pending (created, expires_at: 2026-01-28T17:00:00Z)
 Version 2: expired (expired_at: 2026-01-28T17:00:05Z)
@@ -349,13 +349,13 @@ DELETE ready/{shard}/{bucket}/{task_id}
 
 ### Files to Change
 
-- `crates/qo/src/models/task.rs` - Add `Expired` status, `expires_at`, `expired_at` fields
-- `crates/qo/src/queue/ops.rs` - Add `mark_expired()`, TTL handling in submit
-- `crates/qo/src/queue/submit.rs` - Add `expires_at`, `ttl` to `SubmitOptions`
-- `crates/qo/src/worker/runner.rs` - Check expiration before claim
-- `crates/qo/src/worker/monitor.rs` - Sweep for expired tasks
-- `crates/qo/src/python/queue.rs` - Python bindings
-- `crates/qo/src/cli/commands.rs` - Add `--expires-at`, `--ttl` flags
+- `crates/buquet/src/models/task.rs` - Add `Expired` status, `expires_at`, `expired_at` fields
+- `crates/buquet/src/queue/ops.rs` - Add `mark_expired()`, TTL handling in submit
+- `crates/buquet/src/queue/submit.rs` - Add `expires_at`, `ttl` to `SubmitOptions`
+- `crates/buquet/src/worker/runner.rs` - Check expiration before claim
+- `crates/buquet/src/worker/monitor.rs` - Sweep for expired tasks
+- `crates/buquet/src/python/queue.rs` - Python bindings
+- `crates/buquet/src/cli/commands.rs` - Add `--expires-at`, `--ttl` flags
 
 ### Estimated Effort
 
@@ -388,7 +388,7 @@ All core features from this spec are fully implemented:
 - Expiration works with scheduled tasks
 - Python bindings with full support
 - Rust core implementation
-- CLI flags for `qo submit`:
+- CLI flags for `buquet submit`:
   - `--ttl 1h` / `--ttl 30m` / `--ttl 7d` - relative TTL
   - `--expires-at 2026-01-28T17:00:00Z` - absolute expiration
 

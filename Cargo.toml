@@ -1,11 +1,11 @@
 [workspace]
 members = [
-    "crates/qo",
-    "crates/qow",
+    "crates/buquet",
+    "crates/buquet-workflow",
 ]
 
 default-members = [
-    "crates/qo",
+    "crates/buquet",
 ]
 
 resolver = "2"

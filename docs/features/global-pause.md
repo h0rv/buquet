@@ -16,7 +16,7 @@ maintenance, deployments, and incident response.
 | Simple, boring, reliable | One file check per poll cycle, trivial implementation |
 | No coordination services | Workers poll control object, no signals needed |
 | Crash-safe | Pause state persisted, survives restarts |
-| Debuggable | `qo status` shows pause state, clear operational status |
+| Debuggable | `buquet status` shows pause state, clear operational status |
 
 ## Problem
 
@@ -60,7 +60,7 @@ When `control/paused.json` exists, queue is paused. Delete to resume.
 ### Python
 
 ```python
-from qo import connect
+from buquet import connect
 from datetime import timedelta
 
 queue = await connect(bucket="my-queue")
@@ -92,7 +92,7 @@ await queue.resume(force=True)
 ### Rust
 
 ```rust
-use qo::Queue;
+use buquet::Queue;
 use chrono::Duration;
 
 let queue = Queue::connect("my-queue").await?;
@@ -125,17 +125,17 @@ queue.resume().await?;
 
 ```bash
 # Pause the queue
-qo pause
-qo pause --reason "Deploying new version"
-qo pause --reason "Maintenance" --paused-by "alice"
+buquet pause
+buquet pause --reason "Deploying new version"
+buquet pause --reason "Maintenance" --paused-by "alice"
 
 # Pause with auto-resume
-qo pause --reason "Quick fix" --resume-after 30m
-qo pause --reason "Maintenance window" --resume-after 2h
-qo pause --reason "Overnight batch" --resume-at "2026-01-29T06:00:00Z"
+buquet pause --reason "Quick fix" --resume-after 30m
+buquet pause --reason "Maintenance window" --resume-after 2h
+buquet pause --reason "Overnight batch" --resume-at "2026-01-29T06:00:00Z"
 
 # Check status
-qo status
+buquet status
 # Output:
 #   Queue: my-queue
 #   Status: PAUSED
@@ -148,10 +148,10 @@ qo status
 #   Pending tasks: 1,234
 
 # Resume the queue
-qo resume
+buquet resume
 
 # Force resume (ignores auto-resume time)
-qo resume --force
+buquet resume --force
 ```
 
 ## Worker Behavior
@@ -313,9 +313,9 @@ This is acceptable - pause is not instantaneous.
 Second pause fails with `AlreadyPaused` error. Use `--force` to overwrite.
 
 ```bash
-qo pause --reason "First pause"
-qo pause --reason "Update reason"  # Error: Queue already paused
-qo pause --reason "Update reason" --force  # Overwrites
+buquet pause --reason "First pause"
+buquet pause --reason "Update reason"  # Error: Queue already paused
+buquet pause --reason "Update reason" --force  # Overwrites
 ```
 
 ### Auto-Resume While Worker Offline
@@ -336,10 +336,10 @@ Pause specific task types or shards:
 
 ```bash
 # Pause only specific task type
-qo pause --type send_email
+buquet pause --type send_email
 
 # Pause specific shards
-qo pause --shards 0,1,2,3
+buquet pause --shards 0,1,2,3
 ```
 
 Control objects:
@@ -354,15 +354,15 @@ control/paused/shard/0        # Shard pause
 ## Metrics
 
 ```
-qo_queue_paused{bucket}  # Gauge: 1 if paused, 0 if not
-qo_pause_duration_seconds{bucket}  # How long paused
-qo_pause_events_total{bucket, action=pause|resume}
+buquet_queue_paused{bucket}  # Gauge: 1 if paused, 0 if not
+buquet_pause_duration_seconds{bucket}  # How long paused
+buquet_pause_events_total{bucket, action=pause|resume}
 ```
 
 ## Worker Status Display
 
 ```bash
-$ qo workers
+$ buquet workers
 
 WORKER          STATUS    CURRENT TASK    UPTIME
 worker-1        idle      -               2h 30m
@@ -378,11 +378,11 @@ Auto-resume: in 25 minutes
 
 ### Files to Change
 
-- `crates/qo/src/queue/control.rs` (new) - Pause/resume operations
-- `crates/qo/src/models/control.rs` (new) - `PauseState` struct
-- `crates/qo/src/worker/runner.rs` - Check pause before claiming
-- `crates/qo/src/python/queue.rs` - Python bindings
-- `crates/qo/src/cli/commands.rs` - Add `Pause`, `Resume` subcommands, update `Status`
+- `crates/buquet/src/queue/control.rs` (new) - Pause/resume operations
+- `crates/buquet/src/models/control.rs` (new) - `PauseState` struct
+- `crates/buquet/src/worker/runner.rs` - Check pause before claiming
+- `crates/buquet/src/python/queue.rs` - Python bindings
+- `crates/buquet/src/cli/commands.rs` - Add `Pause`, `Resume` subcommands, update `Status`
 
 ### Estimated Effort
 

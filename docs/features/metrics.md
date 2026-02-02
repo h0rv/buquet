@@ -4,20 +4,20 @@
 > **Effort:** ~50 lines of Rust
 > **Tier:** 2 (Production Essential)
 
-qo uses the [`metrics`](https://docs.rs/metrics) crate - a facade that lets you instrument code once and pick your exporter at runtime.
+buquet uses the [`metrics`](https://docs.rs/metrics) crate - a facade that lets you instrument code once and pick your exporter at runtime.
 
 ## Metrics Emitted
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `qo.tasks.submitted` | Counter | `task_type` | Tasks submitted to queue |
-| `qo.tasks.completed` | Counter | `task_type` | Tasks completed successfully |
-| `qo.tasks.failed` | Counter | `task_type`, `reason` | Tasks failed (`timeout`, `retryable`, `permanent`, `no_handler`) |
-| `qo.task.duration_seconds` | Histogram | `task_type` | Task execution duration |
-| `qo.claims.success` | Counter | | Successful task claims |
-| `qo.claims.conflict` | Counter | | Claim conflicts (another worker won) |
-| `qo.tasks.timeout_recovered` | Counter | | Tasks recovered after timeout |
-| `qo.tasks.retries_exhausted` | Counter | | Tasks failed after max retries |
+| `buquet.tasks.submitted` | Counter | `task_type` | Tasks submitted to queue |
+| `buquet.tasks.completed` | Counter | `task_type` | Tasks completed successfully |
+| `buquet.tasks.failed` | Counter | `task_type`, `reason` | Tasks failed (`timeout`, `retryable`, `permanent`, `no_handler`) |
+| `buquet.task.duration_seconds` | Histogram | `task_type` | Task execution duration |
+| `buquet.claims.success` | Counter | | Successful task claims |
+| `buquet.claims.conflict` | Counter | | Claim conflicts (another worker won) |
+| `buquet.tasks.timeout_recovered` | Counter | | Tasks recovered after timeout |
+| `buquet.tasks.retries_exhausted` | Counter | | Tasks failed after max retries |
 
 ## Python Configuration
 
@@ -26,33 +26,33 @@ Python workers have built-in support for configuring metrics exporters:
 ### Prometheus
 
 ```python
-import qo
+import buquet
 
 # Start Prometheus exporter on :9000/metrics
-qo.metrics.enable_prometheus(port=9000)
+buquet.metrics.enable_prometheus(port=9000)
 
 # Now run your worker as usual
-queue = await qo.connect()
-worker = qo.Worker(queue, "worker-1", ["0", "1", "2", "3"])
+queue = await buquet.connect()
+worker = buquet.Worker(queue, "worker-1", ["0", "1", "2", "3"])
 await worker.run()
 ```
 
 ### StatsD / Datadog
 
 ```python
-import qo
+import buquet
 
 # Send metrics to Datadog agent via DogStatsD
-qo.metrics.enable_statsd(host="127.0.0.1", port=8125)
+buquet.metrics.enable_statsd(host="127.0.0.1", port=8125)
 ```
 
 ### OpenTelemetry (OTLP)
 
 ```python
-import qo
+import buquet
 
 # Send metrics to an OpenTelemetry collector
-qo.metrics.enable_opentelemetry(endpoint="http://localhost:4317")
+buquet.metrics.enable_opentelemetry(endpoint="http://localhost:4317")
 ```
 
 ### Environment Variable Configuration
@@ -77,10 +77,10 @@ export QO_METRICS_OTLP_ENDPOINT=http://localhost:4317
 Then in Python:
 
 ```python
-import qo
+import buquet
 
 # Auto-configure from environment
-if qo.metrics.auto_configure():
+if buquet.metrics.auto_configure():
     print("Metrics configured from environment")
 else:
     print("QO_METRICS_EXPORTER not set, metrics disabled")
@@ -89,9 +89,9 @@ else:
 ### Check Current Configuration
 
 ```python
-import qo
+import buquet
 
-exporter = qo.metrics.current_exporter()
+exporter = buquet.metrics.current_exporter()
 if exporter:
     print(f"Using {exporter} exporter")
 else:

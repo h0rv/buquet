@@ -15,8 +15,8 @@ Producers can get stuck for up to the idempotency TTL even though no task exists
 - All subsequent retries fail until TTL expires.
 
 ## Location
-- `crates/qo/src/queue/idempotency.rs:390-400`
-- `crates/qo/src/queue/ops.rs:128-205`
+- `crates/buquet/src/queue/idempotency.rs:390-400`
+- `crates/buquet/src/queue/ops.rs:128-205`
 
 ## Proposed Fix
 Treat "record exists but task missing" as an expired record:

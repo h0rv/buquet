@@ -53,7 +53,7 @@ Shard count is a **queue property**, not a worker property. All producers and wo
 ### Rust
 
 ```rust
-use qo::queue::{Queue, QueueConfig};
+use buquet::queue::{Queue, QueueConfig};
 
 let config = QueueConfig {
     shard_prefix_len: 2,  // 256 shards (00-ff)
@@ -66,7 +66,7 @@ let queue = Queue::with_config(client, config);
 ### Python
 
 ```python
-from qo import connect
+from buquet import connect
 
 queue = await connect(
     bucket="my-tasks",
@@ -74,7 +74,7 @@ queue = await connect(
 )
 ```
 
-### Config File (qo.toml)
+### Config File (buquet.toml)
 
 ```toml
 [queue]
@@ -146,7 +146,7 @@ let my_shards = all_shards
 ### Config-Driven Assignment
 
 ```toml
-# qo.toml
+# buquet.toml
 [worker]
 # Explicit list
 shards = ["00", "01", "02", "03"]
@@ -211,21 +211,21 @@ tasks/a1b/a1b2c3d4-e5f6-7890-abcd-ef1234567890.json
 ### Files to Modify
 
 ```
-crates/qo/src/queue/
+crates/buquet/src/queue/
 ├── config.rs      # Add QueueConfig with shard_prefix_len
 └── ops.rs         # Pass prefix_len to shard_from_id
 
-crates/qo/src/models/
+crates/buquet/src/models/
 └── task.rs        # Update shard_from_id signature
 
-crates/qo/src/worker/
+crates/buquet/src/worker/
 └── mod.rs         # Generate shard list based on prefix_len
 
-crates/qo/src/python/
+crates/buquet/src/python/
 ├── queue.rs       # Expose shard_prefix_len in connect()
 └── worker.rs      # Handle shard assignment
 
-crates/qo/src/config.rs      # Config file parsing
+crates/buquet/src/config.rs      # Config file parsing
 ```
 
 ### New Types
@@ -331,7 +331,7 @@ Add to getting-started.md:
 ```markdown
 ## Scaling with Shards
 
-By default, qo uses 16 shards. For high-volume queues, increase the shard count:
+By default, buquet uses 16 shards. For high-volume queues, increase the shard count:
 
 ​```python
 queue = await connect(

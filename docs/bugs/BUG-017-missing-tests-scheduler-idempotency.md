@@ -12,8 +12,8 @@ Regressions in scheduling and idempotency behavior can ship silently, leading to
 There are integration tests for scheduling and idempotency, but none cover these failure paths.
 
 ## Location
-- `crates/qo/tests/integration/scheduling.rs`
-- `crates/qo/tests/integration/idempotency.rs`
+- `crates/buquet/tests/integration/scheduling.rs`
+- `crates/buquet/tests/integration/idempotency.rs`
 
 ## Proposed Fix
 Add integration tests (or unit tests with a mock S3 client) that cover:

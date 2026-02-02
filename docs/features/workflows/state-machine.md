@@ -5,7 +5,7 @@
 ## Overview
 Define explicit workflow and step state transitions to remove ambiguity around
 failures, retries, and cancellation. These states are enforced by the
-qow engine and serialized in `state.json`.
+buquet-workflow engine and serialized in `state.json`.
 
 ## Philosophy Alignment
 

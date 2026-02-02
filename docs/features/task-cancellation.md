@@ -15,7 +15,7 @@ processing and move to a terminal `Cancelled` status without counting as failure
 | Simple, boring, reliable | One new status, trivial implementation |
 | No coordination services | Workers check status on claim, no signals needed |
 | Crash-safe | Cancelled status is persisted, survives restarts |
-| Debuggable | `qo status` shows cancelled, history shows who cancelled |
+| Debuggable | `buquet status` shows cancelled, history shows who cancelled |
 
 ## Problem
 
@@ -47,7 +47,7 @@ enum TaskStatus {
 ### Python
 
 ```python
-from qo import connect, TaskStatus
+from buquet import connect, TaskStatus
 
 queue = await connect(bucket="my-queue")
 
@@ -72,7 +72,7 @@ cancelled_count = await queue.cancel_by_type("old_task_type")
 ### Rust
 
 ```rust
-use qo::{Queue, TaskStatus};
+use buquet::{Queue, TaskStatus};
 
 let queue = Queue::connect("my-queue").await?;
 
@@ -94,19 +94,19 @@ match task.status {
 
 ```bash
 # Cancel a task
-qo cancel abc123
+buquet cancel abc123
 
 # Cancel with reason
-qo cancel abc123 --reason "Duplicate submission"
+buquet cancel abc123 --reason "Duplicate submission"
 
 # Cancel multiple tasks
-qo cancel abc123 def456 ghi789
+buquet cancel abc123 def456 ghi789
 
 # Cancel all pending tasks of a type
-qo cancel --type old_task_type
+buquet cancel --type old_task_type
 
 # Dry run (show what would be cancelled)
-qo cancel --type old_task_type --dry-run
+buquet cancel --type old_task_type --dry-run
 ```
 
 ## Behavior
@@ -277,8 +277,8 @@ No lease index to clean (task was Pending, not Running).
 ## Metrics
 
 ```
-qo_tasks_cancelled_total{task_type}
-qo_cancel_requests_total{task_type, outcome=success|already_cancelled|not_found|invalid_status}
+buquet_tasks_cancelled_total{task_type}
+buquet_cancel_requests_total{task_type, outcome=success|already_cancelled|not_found|invalid_status}
 ```
 
 ## Version History
@@ -286,7 +286,7 @@ qo_cancel_requests_total{task_type, outcome=success|already_cancelled|not_found|
 Cancellations appear in task history:
 
 ```bash
-$ qo history abc123
+$ buquet history abc123
 
 Version 1: pending (created)
 Version 2: cancelled (cancelled_by: user:alice, reason: "No longer needed")
@@ -296,12 +296,12 @@ Version 2: cancelled (cancelled_by: user:alice, reason: "No longer needed")
 
 ### Files to Change
 
-- `crates/qo/src/models/task.rs` - Add `Cancelled` status, `cancel_requested`, `cancelled_at`, `cancelled_by`
-- `crates/qo/src/queue/ops.rs` - Add `cancel()`, `cancel_many()`, `cancel_by_type()`
-- `crates/qo/src/worker/runner.rs` - Check `cancel_requested` after handler returns
-- `crates/qo/src/python/queue.rs` - Python bindings for cancel
-- `crates/qo/src/python/worker.rs` - Add `context.is_cancellation_requested()`
-- `crates/qo/src/cli/commands.rs` - Add `Cancel` subcommand
+- `crates/buquet/src/models/task.rs` - Add `Cancelled` status, `cancel_requested`, `cancelled_at`, `cancelled_by`
+- `crates/buquet/src/queue/ops.rs` - Add `cancel()`, `cancel_many()`, `cancel_by_type()`
+- `crates/buquet/src/worker/runner.rs` - Check `cancel_requested` after handler returns
+- `crates/buquet/src/python/queue.rs` - Python bindings for cancel
+- `crates/buquet/src/python/worker.rs` - Add `context.is_cancellation_requested()`
+- `crates/buquet/src/cli/commands.rs` - Add `Cancel` subcommand
 
 ### Estimated Effort
 
@@ -331,15 +331,15 @@ All features from this spec are fully implemented:
 - Cannot cancel completed/failed tasks (returns error)
 - Python bindings with full support
 - Rust core implementation
-- CLI `qo cancel` command with:
-  - Multiple task IDs: `qo cancel uuid1 uuid2 uuid3`
-  - Cancel by type: `qo cancel --task-type old_task_type`
-  - Reason tracking: `qo cancel uuid --reason "No longer needed"`
-  - Metadata: `qo cancel uuid --cancelled-by "user:alice"`
-  - JSON output: `qo cancel uuid --json`
+- CLI `buquet cancel` command with:
+  - Multiple task IDs: `buquet cancel uuid1 uuid2 uuid3`
+  - Cancel by type: `buquet cancel --task-type old_task_type`
+  - Reason tracking: `buquet cancel uuid --reason "No longer needed"`
+  - Metadata: `buquet cancel uuid --cancelled-by "user:alice"`
+  - JSON output: `buquet cancel uuid --json`
 
 ## Non-Goals
 
 - **Force kill running tasks**: No signals, cooperative only
-- **Cancel with rollback**: qo doesn't know what to roll back
+- **Cancel with rollback**: buquet doesn't know what to roll back
 - **Automatic cancellation on timeout**: That's what Failed status is for

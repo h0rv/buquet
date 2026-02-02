@@ -1,6 +1,6 @@
 # Task Queue and Workflow Engine Comparison
 
-A comprehensive comparison of qo against other task queue and workflow orchestration systems.
+A comprehensive comparison of buquet against other task queue and workflow orchestration systems.
 
 ---
 
@@ -8,7 +8,7 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 
 | System | Stars | Language | Backend | License | Managed Cloud | SDKs |
 |--------|------:|----------|---------|---------|:-------------:|------|
-| [**qo**](https://github.com/h0rv/qo) | - | Rust | S3 only | MIT | No | Rust, Python |
+| [**buquet**](https://github.com/h0rv/buquet) | - | Rust | S3 only | MIT | No | Rust, Python |
 | [**Apache Airflow**](https://github.com/apache/airflow) | ~44k | Python | PostgreSQL/MySQL + Redis/RabbitMQ | Apache-2.0 | Yes | Python, Go |
 | [**Celery**](https://github.com/celery/celery) | ~28k | Python | RabbitMQ/Redis + Result Backend | BSD-3 | No | Python, Node, Go, Rust, PHP, Ruby |
 | [**Kestra**](https://github.com/kestra-io/kestra) | ~26k | Java | PostgreSQL/MySQL/H2 + Kafka/Pulsar | Apache-2.0 | Yes | Any (YAML + plugins) |
@@ -34,7 +34,7 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 
 | System | Retries | Timeouts | Scheduling | Priorities | Rate Limiting | Workflows/DAGs | UI/Observability |
 |--------|:-------:|:--------:|:----------:|:----------:|:-------------:|:--------------:|:----------------:|
-| **qo** | Yes | Yes | Yes | No | Yes (pattern) | Planned | Yes (dashboard) |
+| **buquet** | Yes | Yes | Yes | No | Yes (pattern) | Planned | Yes (dashboard) |
 | **Apache Airflow** | Yes | Yes | Yes | Yes | Yes (pools) | Yes (native DAGs) | Yes (web UI) |
 | **Argo Workflows** | Yes | Yes | Yes | Yes | Yes | Yes (native DAGs) | Yes (web UI) |
 | **Celery** | Yes | Yes | Yes (Beat) | Yes | Yes | Yes (canvas) | Yes (Flower) |
@@ -58,11 +58,11 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 
 ## Detailed Profiles
 
-### qo
+### buquet
 
 | Field | Value |
 |-------|-------|
-| **GitHub URL** | https://github.com/h0rv/qo |
+| **GitHub URL** | https://github.com/h0rv/buquet |
 | **Primary Language** | Rust |
 | **License** | MIT |
 | **Backend Requirements** | S3-compatible storage only (AWS S3, LocalStack, MinIO, etc.) |
@@ -76,8 +76,8 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 - Scheduling: Yes (one-shot delays and recurring cron schedules)
 - Priorities: No
 - Rate Limiting: Yes (via RescheduleError pattern - durable sleep)
-- Workflows/DAGs: Planned (qow package)
-- Observability/UI: Yes (web dashboard, `qo tail` live stream)
+- Workflows/DAGs: Planned (buquet-workflow package)
+- Observability/UI: Yes (web dashboard, `buquet tail` live stream)
 
 **Additional Features:**
 - Task cancellation (single, batch, by-type, cooperative for running tasks)
@@ -564,7 +564,7 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 
 ## Choosing the Right System
 
-### Use qo when:
+### Use buquet when:
 - You want minimal infrastructure (just S3, no databases)
 - You need polyglot support (Rust + Python workers)
 - Your workload tolerates 1-5 second dispatch latency
@@ -638,7 +638,7 @@ A comprehensive comparison of qo against other task queue and workflow orchestra
 
 | System | Database | Message Broker | Other |
 |--------|----------|----------------|-------|
-| **qo** | None | None | S3 |
+| **buquet** | None | None | S3 |
 | **Temporal** | PostgreSQL/MySQL/Cassandra | None | Optional: Elasticsearch |
 | **Hatchet** | PostgreSQL | None | None |
 | **Prefect** | PostgreSQL/SQLite | None | None |

@@ -40,10 +40,10 @@ Trace: task-execute (550e8400...)
 ```bash
 # Enable tracing via environment
 export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
-export OTEL_SERVICE_NAME=qo-worker
+export OTEL_SERVICE_NAME=buquet-worker
 
 # Run worker with tracing
-qo worker
+buquet worker
 ```
 
 ## Implementation
@@ -143,10 +143,10 @@ View traces at http://localhost:16686
 ## Files to Change
 
 - `Cargo.toml` - Add OpenTelemetry dependencies
-- `crates/qo/src/main.rs` - Initialize tracing
-- `crates/qo/src/queue.rs` - Instrument submit/get operations
-- `crates/qo/src/worker/execute.rs` - Instrument task execution
-- `crates/qo/src/storage/s3.rs` - Instrument S3 operations
+- `crates/buquet/src/main.rs` - Initialize tracing
+- `crates/buquet/src/queue.rs` - Instrument submit/get operations
+- `crates/buquet/src/worker/execute.rs` - Instrument task execution
+- `crates/buquet/src/storage/s3.rs` - Instrument S3 operations
 
 ## Dependencies
 
