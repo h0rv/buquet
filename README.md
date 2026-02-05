@@ -1,13 +1,10 @@
 # buquet
 
-Bucket queue: simple task queue and workflow orchestration.
+[![GitHub](https://img.shields.io/badge/GitHub-h0rv%2Fbuquet-blue?logo=github)](https://github.com/h0rv/buquet)
 
-Works with any S3-compatible storage: [AWS S3](https://aws.amazon.com/s3/), [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), [MinIO](https://min.io/), [Tigris](https://www.tigrisdata.com/), [Backblaze B2](https://www.backblaze.com/cloud-storage), [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces), and more.
+A distributed task queue built on S3. No databases, no brokers—just a bucket.
 
-## Packages
-
-- **[buquet](crates/buquet/)** — Core library (Rust + Python bindings)
-- **[buquet-workflow](crates/buquet-workflow/)** — Durable workflow orchestration (to be merged)
+Works with any S3-compatible storage: AWS S3, Cloudflare R2, MinIO, Tigris, Backblaze B2, DigitalOcean Spaces, and more.
 
 ## Quick Start
 
@@ -40,7 +37,13 @@ export S3_BUCKET=buquet-dev
 buquet worker --shards 0,1,2,3
 ```
 
-See [Getting Started](docs/getting-started.md) for setup details.
+## Documentation
+
+- [Getting Started](docs/getting-started.md) — Setup and configuration
+- [Python API](python/README.md) — Python bindings reference
+- [Examples](examples/) — Working Python and Rust examples
+- [Feature Roadmap](docs/features/) — Completed and planned features
+- [Workflows](docs/features/workflows/) — Durable workflow orchestration
 
 ## Why?
 
